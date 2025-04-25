@@ -1,9 +1,10 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-bermuda-50">
+  <div class="flex items-center justify-center lg:mt-40 mt-20 bg-bermuda-50">
     <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
       <div class="text-center">
+        <img src="~/assets/icon.svg" alt="Unform Logo" class="w-16 h-16 mx-auto" />
         <h1 class="text-3xl font-extrabold text-bermuda-800">Unform</h1>
-        <p class="mt-2 text-sm text-bermuda-600">Sign in to access your form dashboard</p>
+        <p class="mt-2 text-sm text-bermuda-600">Sign in to access your forms dashboard</p>
       </div>
 
       <form @submit.prevent="handleLogin" class="mt-8 space-y-6">

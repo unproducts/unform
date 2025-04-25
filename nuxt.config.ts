@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxtjs/tailwindcss'],
+  modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxtjs/tailwindcss', 'nuxt-auth-utils'],
   css: ['~/assets/css/main.css'],
   fonts: {
     families: [
@@ -24,6 +24,15 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'description', content: 'A simple form management solution' },
       ],
+    },
+  },
+  runtimeConfig: {
+    db: {
+      host: 'localhost',
+      port: 5432,
+      user: 'postgres',
+      password: 'postgrespw',
+      database: 'unform',
     },
   },
 });
