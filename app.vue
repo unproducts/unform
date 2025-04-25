@@ -11,5 +11,5 @@
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const showNavBar = computed(() => route.path !== '/login');
+const showNavBar = computed(() => !['/login', '/register'].includes(route.path));
 </script>

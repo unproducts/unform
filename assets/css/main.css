@@ -18,7 +18,7 @@
 }
 
 .form-input {
-  @apply mt-1 block w-full px-3 py-2 border border-bermuda-200 rounded-md shadow-sm focus:outline-none focus:ring-bermuda-500 focus:border-bermuda-500;
+  @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-bermuda-500 focus:border-bermuda-500 sm:text-sm;
 }
 
 .btn-primary {

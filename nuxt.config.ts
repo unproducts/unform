@@ -16,6 +16,11 @@ export default defineNuxtConfig({
       },
     ],
   },
+  nitro: {
+    imports: {
+      dirs: ['server/utils/**/*.ts'],
+    },
+  },
   app: {
     head: {
       title: 'Unform - Form Management',

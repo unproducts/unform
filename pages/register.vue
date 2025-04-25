@@ -1,43 +1,45 @@
 <script setup lang="ts">
-import { loginSchema } from '~/shared/schemas/authentication';
+import { registerSchema } from '~/shared/schemas/authentication';
 
 const router = useRouter();
+const name = ref('');
 const email = ref('');
 const password = ref('');
 const errors = ref<Record<string, string>>({});
-const loginError = ref('');
+const registerError = ref('');
 const isLoading = ref(false);
 
-async function handleLogin() {
+async function handleRegister() {
   try {
     errors.value = {};
-    loginError.value = '';
+    registerError.value = '';
 
     const formData = {
+      name: name.value,
       email: email.value,
       password: password.value,
     };
-    loginSchema.parse(formData);
+    registerSchema.parse(formData);
     isLoading.value = true;
 
     try {
-      await $fetch('/api/login', {
+      await $fetch('/api/register', {
         method: 'POST',
         body: formData,
       });
+
       router.push('/websites');
     } catch (error: any) {
       if (error.response) {
-        loginError.value = error.response._data?.message || 'Login failed. Please try again.';
+        registerError.value = error.response._data?.message || 'Registration failed. Please try again.';
       } else {
-        loginError.value = 'An unexpected error occurred. Please try again.';
-        console.error('Login error:', error);
+        registerError.value = 'An unexpected error occurred. Please try again.';
+        console.error('Registration error:', error);
       }
     } finally {
       isLoading.value = false;
     }
   } catch (error: any) {
-    // Handle Zod validation errors
     if (error.errors) {
       error.errors.forEach((err: any) => {
         if (err.path && err.path.length > 0) {
@@ -45,8 +47,8 @@ async function handleLogin() {
         }
       });
     } else {
-      loginError.value = 'An unexpected error occurred. Please try again.';
-      console.error('Login error:', error);
+      registerError.value = 'An unexpected error occurred. Please try again.';
+      console.error('Registration error:', error);
     }
   }
 }
@@ -58,11 +60,17 @@ async function handleLogin() {
       <div class="text-center">
         <img src="~/assets/icon.svg" alt="Unform Logo" class="w-16 h-16 mx-auto" />
         <h1 class="text-3xl font-extrabold text-bermuda-800">Unform</h1>
-        <p class="mt-2 text-sm text-bermuda-600">Sign in to access your forms dashboard</p>
+        <p class="mt-2 text-sm text-bermuda-600">Create your account</p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="mt-8 space-y-6">
+      <form @submit.prevent="handleRegister" class="mt-8 space-y-6">
         <div class="space-y-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-bermuda-700">Full Name</label>
+            <input id="name" type="text" v-model="name" required class="form-input" />
+            <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
+          </div>
+
           <div>
             <label for="email" class="block text-sm font-medium text-bermuda-700">Email</label>
             <input id="email" type="email" v-model="email" required class="form-input" />
@@ -76,8 +84,8 @@ async function handleLogin() {
           </div>
         </div>
 
-        <div v-if="loginError" class="text-red-600 text-sm text-center">
-          {{ loginError }}
+        <div v-if="registerError" class="text-red-600 text-sm text-center">
+          {{ registerError }}
         </div>
 
         <div>
@@ -87,14 +95,14 @@ async function handleLogin() {
             :disabled="isLoading"
           >
             <span v-if="isLoading">Loading...</span>
-            <span v-else>Sign in</span>
+            <span v-else>Create Account</span>
           </button>
         </div>
 
-        <div class="text-center text-sm mt-4">
+        <div class="text-center text-sm">
           <p>
-            Don't have an account?
-            <NuxtLink to="/register" class="text-bermuda-600 hover:text-bermuda-800">Create one</NuxtLink>
+            Already have an account?
+            <NuxtLink to="/login" class="text-bermuda-600 hover:text-bermuda-800">Sign in</NuxtLink>
           </p>
         </div>
       </form>
