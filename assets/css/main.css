@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+.form-input {
+  @apply mt-1 block w-full px-3 py-2 border border-bermuda-200 rounded-md shadow-sm focus:outline-none focus:ring-bermuda-500 focus:border-bermuda-500;
+}
+
+.btn-primary {
+  @apply px-4 py-2 bg-bermuda-500 text-white rounded-md hover:bg-bermuda-600 transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 border border-bermuda-200 rounded-md text-bermuda-700 bg-white hover:bg-bermuda-50;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-md p-6;
+}
+
+.modal-backdrop {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg shadow-xl p-6;
+}
