@@ -19,5 +19,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  // @ts-expect-error adminId deleted, but type says otherwise.
+  delete form[0]!.adminId;
+  // @ts-expect-error websiteId deleted, but type says otherwise.
+  delete form[0]!.websiteId;
+
   return form[0]! as unknown as Form;
 });

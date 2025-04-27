@@ -30,18 +30,6 @@
         </div>
       </div>
 
-      <div class="card mb-8">
-        <h2 class="text-lg font-medium text-bermuda-700 mb-4">Integration Code</h2>
-        <div class="bg-bermuda-50 p-4 rounded-md">
-          <pre
-            class="text-sm text-bermuda-700 overflow-x-auto"
-          ><code>&lt;form action="{{ formEndpoint }}" method="POST"&gt;
-  &lt;!-- Your form fields here --&gt;
-  &lt;button type="submit"&gt;Submit&lt;/button&gt;
-&lt;/form&gt;</code></pre>
-        </div>
-      </div>
-
       <div class="mb-4">
         <h2 class="text-xl font-bold text-bermuda-800 mb-4">Forms</h2>
       </div>
@@ -63,8 +51,24 @@
         >
           <h3 class="text-lg font-semibold text-bermuda-700 mb-2">{{ form.name }}</h3>
           <div class="flex justify-between items-center">
-            <div class="text-sm text-bermuda-600">{{ form.responseCount }} responses</div>
-            <div class="text-sm text-bermuda-500">Created {{ form.createdAt }}</div>
+            <div class="text-sm text-bermuda-600">{{ new Date(form.createdAt).toLocaleDateString() }}</div>
+            <div class="text-sm text-bermuda-500 flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              View Responses
+            </div>
           </div>
         </NuxtLink>
       </div>
@@ -209,12 +213,9 @@ const route = useRoute();
 const router = useRouter();
 const websiteId = route.params.id as string;
 const { isLoading, error, getWebsite, updateWebsite, deleteWebsite } = useWebsites();
+const { forms, isLoading: formsLoading, error: formsError, fetchForms, createForm } = useForms(websiteId);
 
 const website = ref<Website | null>(null);
-const forms = ref([
-  { id: '1', name: 'Contact Form', responseCount: 12, createdAt: '2023-05-10' },
-  { id: '2', name: 'Newsletter Signup', responseCount: 45, createdAt: '2023-06-22' },
-]);
 
 // Modal states
 const showAddFormModal = ref(false);
@@ -236,11 +237,6 @@ const editError = ref('');
 const editLoading = ref(false);
 const deleteLoading = ref(false);
 
-// Computed values
-const formEndpoint = computed(() => {
-  return `https://api.unform.example/submit/${websiteId}`;
-});
-
 // Load website data
 async function loadWebsite() {
   const data = await getWebsite(websiteId);
@@ -255,6 +251,7 @@ async function loadWebsite() {
 // Initialize data on page load
 onMounted(async () => {
   await loadWebsite();
+  await fetchForms();
 });
 
 function closeEditModal() {
@@ -317,19 +314,15 @@ async function handleDeleteWebsite() {
   }
 }
 
-function addForm() {
-  // In a real app, this would send a request to the backend
-  const id = (forms.value.length + 1).toString();
-  forms.value.push({
-    id,
-    name: newForm.name,
-    responseCount: 0,
-    createdAt: new Date().toISOString().split('T')[0],
-  });
-
-  // Reset form and close modal
-  newForm.name = '';
-  showAddFormModal.value = false;
+async function addForm() {
+  try {
+    await createForm(newForm);
+    // Reset form and close modal
+    newForm.name = '';
+    showAddFormModal.value = false;
+  } catch (error: any) {
+    console.error('Failed to create form:', error);
+  }
 }
 </script>
 
