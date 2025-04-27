@@ -1,21 +1,28 @@
 import { loginSchema } from '~~/shared/schemas/authentication';
 import { adminsTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import authenticateRequest from '../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, loginSchema.parse);
 
   const db = await useDatabase();
 
-  const users = await db.select().from(adminsTable).where(eq(adminsTable.email, body.email));
+  const users = await db
+    .select({
+      id: adminsTable.id,
+      password: adminsTable.password,
+    })
+    .from(adminsTable)
+    .where(eq(adminsTable.email, body.email));
 
   if (users.length === 1) {
     const admin = users[0]!;
     const isPasswordCorrect = await verifyPassword(admin.password, body.password);
     if (isPasswordCorrect) {
       await setUserSession(event, {
-        user: admin,
+        user: {
+          id: admin.id,
+        },
       });
       return sendNoContent(event);
     }

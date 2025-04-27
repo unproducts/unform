@@ -15,24 +15,20 @@ export function createUnauthorisedError() {
 }
 
 export default async function authenticateRequest(event: H3Event): Promise<{ user: Admin }> {
-  const session = await getUserSession(event);
+  const session = await requireUserSession(event);
 
-  if (session && session.user) {
-    if (IS_DEV) {
-      console.log('Authenticating Admin', session.user!.id);
-    }
+  if (IS_DEV) {
+    console.log('Authenticating Admin', session.user.id);
+  }
 
-    const db = await useDatabase();
-    const users = await db.select().from(adminsTable).where(eq(adminsTable.id, session.user.id));
-    if (!users || !users.length) {
-      throw createUnauthorisedError();
-    }
-    const user = users[0]!;
-
-    // @ts-expect-error password deleted, but type says otherwise.
-    delete user.password;
-    return { user };
-  } else {
+  const db = await useDatabase();
+  const users = await db.select().from(adminsTable).where(eq(adminsTable.id, session.user.id));
+  if (!users || !users.length) {
     throw createUnauthorisedError();
   }
+  const user = users[0]!;
+
+  // @ts-expect-error password deleted, but type says otherwise.
+  delete user.password;
+  return { user };
 }

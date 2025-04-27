@@ -16,6 +16,7 @@ export default defineNuxtConfig({
       },
     ],
   },
+  ssr: false,
   nitro: {
     imports: {
       dirs: ['server/utils/**/*.ts'],

@@ -2,6 +2,8 @@
 import { loginSchema } from '~/shared/schemas/authentication';
 
 const router = useRouter();
+const { login } = useLogin();
+
 const email = ref('');
 const password = ref('');
 const errors = ref<Record<string, string>>({});
@@ -19,12 +21,8 @@ async function handleLogin() {
     };
     loginSchema.parse(formData);
     isLoading.value = true;
-
     try {
-      await $fetch('/api/login', {
-        method: 'POST',
-        body: formData,
-      });
+      await login(formData);
       router.push('/websites');
     } catch (error: any) {
       if (error.response) {

@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const userState = useAuthenticatedUserState();
+const { logout } = useLogout();
+</script>
 <template>
   <nav class="bg-white shadow-md">
     <div class="container mx-auto px-4">
@@ -9,7 +13,7 @@
           </NuxtLink>
         </div>
         <div class="flex items-center space-x-4">
-          <span class="text-bermuda-800">{{ user.name }}</span>
+          <span class="text-bermuda-800">{{ userState?.name }}</span>
           <button
             @click="logout"
             class="px-4 py-2 rounded text-sm text-white bg-bermuda-500 hover:bg-bermuda-600 transition-colors duration-200"
@@ -21,17 +25,3 @@
     </div>
   </nav>
 </template>
-
-<script setup>
-// In a real app, this would come from authentication state
-const user = reactive({
-  name: 'Admin User',
-});
-
-const router = useRouter();
-
-function logout() {
-  // In a real app, this would clear authentication state
-  router.push('/login');
-}
-</script>

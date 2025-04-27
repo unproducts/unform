@@ -17,19 +17,23 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const insertedUsers = await db
+  const insertedAdmins = await db
     .insert(adminsTable)
     .values({
       name: body.name,
       email: body.email,
       password: await hashPassword(body.password),
     })
-    .returning();
+    .returning({
+      id: adminsTable.id,
+    });
 
-  if (insertedUsers && insertedUsers.length === 1) {
-    const user = insertedUsers[0]!;
+  if (insertedAdmins && insertedAdmins.length === 1) {
+    const admin = insertedAdmins[0]!;
     await setUserSession(event, {
-      user,
+      user: {
+        id: admin.id,
+      },
     });
     return sendNoContent(event);
   }

@@ -12,12 +12,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-// Auto-redirect to login page
-onMounted(() => {
-  setTimeout(() => {
-    navigateTo('/login');
-  }, 500);
-});
-</script>
