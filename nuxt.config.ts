@@ -44,5 +44,8 @@ export default defineNuxtConfig({
       database: 'unform',
     },
     delayResponse: false,
+    public: {
+      host: 'http://localhost:3000',
+    },
   },
 });

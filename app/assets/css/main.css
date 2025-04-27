@@ -29,6 +29,10 @@
   @apply px-4 py-2 border border-bermuda-200 rounded-md text-bermuda-700 bg-white hover:bg-bermuda-50;
 }
 
+.btn-danger {
+  @apply px-4 py-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500;
+}
+
 .card {
   @apply bg-white rounded-lg shadow-md p-6;
 }

@@ -347,6 +347,9 @@ const router = useRouter();
 const websiteId = route.params.id as string;
 const formId = route.params.formId as string;
 
+const config = useRuntimeConfig();
+const host = config.public.host;
+
 // Use composables
 const { getWebsite } = useWebsites();
 const { getForm, updateForm, deleteForm } = useForms(websiteId);
@@ -385,7 +388,7 @@ const deleteLoading = ref(false);
 const selectedResponse = ref<any>(null);
 
 const formEndpoint = computed(() => {
-  return `https://api.unform.example/submit/${websiteId}/${formId}`;
+  return `${host}/forms/${formId}`;
 });
 
 // Load data on mount
@@ -511,8 +514,7 @@ function exportResponses() {
 }
 
 function copyEndpoint() {
-  // In a real app, this would copy the endpoint to the clipboard
-  alert(`Copied to clipboard: ${formEndpoint.value}`);
+  navigator.clipboard.writeText(formEndpoint.value);
 }
 
 function formatDate(dateString: string) {
@@ -523,37 +525,3 @@ function formatTime(dateString: string) {
   return new Date(dateString).toLocaleTimeString();
 }
 </script>
-
-<style scoped>
-.card {
-  @apply p-6 bg-white rounded-lg shadow-md;
-}
-
-.form-input {
-  @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-bermuda-500 focus:border-bermuda-500 sm:text-sm;
-}
-
-.modal-backdrop {
-  @apply fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50;
-}
-
-.modal-content {
-  @apply bg-white p-6 rounded-lg shadow-xl;
-}
-
-.btn-primary {
-  @apply px-4 py-2 bg-bermuda-500 text-white rounded-md hover:bg-bermuda-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bermuda-500;
-}
-
-.btn-secondary {
-  @apply px-4 py-2 bg-white text-bermuda-700 border border-bermuda-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bermuda-500;
-}
-
-.btn-danger {
-  @apply px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500;
-}
-
-.spinner {
-  @apply h-8 w-8 rounded-full border-4 border-bermuda-200 border-t-bermuda-600 animate-spin;
-}
-</style>

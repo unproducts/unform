@@ -3,6 +3,7 @@ import { formsTable, websitesTable } from '~~/server/db/schema';
 import { useDatabase } from '~~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
+  console.log('OPTIONS request received');
   const { id: formId } = getRouterParams(event);
 
   try {

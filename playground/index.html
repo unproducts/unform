@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Trigger App</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-indigo-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold text-indigo-800 mb-6 text-center">Form Trigger App</h1>
+
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-indigo-700 mb-4">Form Configuration</h2>
+
+        <div class="mb-4">
+          <label for="formAction" class="block text-sm font-medium text-gray-700 mb-1">Form Action URL</label>
+          <input
+            type="text"
+            id="formAction"
+            placeholder="https://example.com/api/submit"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="method" class="block text-sm font-medium text-gray-700 mb-1">HTTP Method</label>
+          <select
+            id="method"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="POST">POST</option>
+            <option value="GET">GET</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-indigo-700 mb-4">Form Fields</h2>
+
+        <div id="formFields">
+          <!-- Form fields will be added here -->
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button
+            id="addField"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Add Field
+          </button>
+          <button
+            id="clearFields"
+            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          >
+            Clear Fields
+          </button>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button
+          id="submitForm"
+          class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-lg font-semibold"
+        >
+          Submit Form
+        </button>
+      </div>
+
+      <div id="response" class="mt-6 bg-white rounded-lg shadow-md p-6 hidden">
+        <h2 class="text-xl font-semibold text-indigo-700 mb-4">Response</h2>
+        <pre id="responseContent" class="bg-gray-100 p-4 rounded-md overflow-auto max-h-64"></pre>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
