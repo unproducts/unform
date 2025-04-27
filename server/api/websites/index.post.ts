@@ -17,5 +17,5 @@ export default defineEventHandler(async (event) => {
   // @ts-expect-error password deleted, but type says otherwise.
   delete website[0]!.adminId;
 
-  return website as unknown as Website;
+  return website[0] as unknown as Website;
 });

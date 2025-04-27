@@ -30,6 +30,9 @@ export const websitesTable = pgTable('websites', {
 export const formsTable = pgTable('forms', {
   id: defaultUuidPkField(),
   name: varchar('name', { length: 255 }).notNull(),
+  adminId: uuid('admin_id')
+    .notNull()
+    .references(() => adminsTable.id),
   websiteId: uuid('website_id')
     .notNull()
     .references(() => websitesTable.id),
@@ -39,6 +42,12 @@ export const formsTable = pgTable('forms', {
 
 export const formResponsesTable = pgTable('form_responses', {
   id: defaultUuidPkField(),
+  adminId: uuid('admin_id')
+    .notNull()
+    .references(() => adminsTable.id),
+  websiteId: uuid('website_id')
+    .notNull()
+    .references(() => websitesTable.id),
   formId: uuid('form_id')
     .notNull()
     .references(() => formsTable.id),

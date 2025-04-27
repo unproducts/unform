@@ -9,108 +9,313 @@
       </NuxtLink>
     </div>
 
-    <div class="flex justify-between items-center mb-8">
-      <div>
-        <h1 class="text-2xl font-bold text-bermuda-800">{{ website.name }}</h1>
-        <p class="text-bermuda-600">{{ website.domain }}</p>
-      </div>
-      <button @click="showAddFormModal = true" class="btn-primary">Create New Form</button>
+    <div v-if="isLoading" class="flex justify-center py-8">
+      <div class="spinner"></div>
     </div>
 
-    <div class="card mb-8">
-      <h2 class="text-lg font-medium text-bermuda-700 mb-4">Integration Code</h2>
-      <div class="bg-bermuda-50 p-4 rounded-md">
-        <pre
-          class="text-sm text-bermuda-700 overflow-x-auto"
-        ><code>&lt;form action="{{ formEndpoint }}" method="POST"&gt;
+    <div v-else-if="error" class="bg-red-50 p-4 rounded-md text-red-600 mb-6">
+      {{ error }}
+      <button @click="loadWebsite" class="text-red-700 underline ml-2">Try again</button>
+    </div>
+
+    <template v-else-if="website">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h1 class="text-2xl font-bold text-bermuda-800">{{ website.name }}</h1>
+          <p class="text-bermuda-600">{{ website.domain }}</p>
+        </div>
+        <div class="flex space-x-3">
+          <button @click="showEditWebsiteModal = true" class="btn-secondary">Edit Website</button>
+          <button @click="showAddFormModal = true" class="btn-primary">Create New Form</button>
+        </div>
+      </div>
+
+      <div class="card mb-8">
+        <h2 class="text-lg font-medium text-bermuda-700 mb-4">Integration Code</h2>
+        <div class="bg-bermuda-50 p-4 rounded-md">
+          <pre
+            class="text-sm text-bermuda-700 overflow-x-auto"
+          ><code>&lt;form action="{{ formEndpoint }}" method="POST"&gt;
   &lt;!-- Your form fields here --&gt;
   &lt;button type="submit"&gt;Submit&lt;/button&gt;
 &lt;/form&gt;</code></pre>
-      </div>
-    </div>
-
-    <div class="mb-4">
-      <h2 class="text-xl font-bold text-bermuda-800 mb-4">Forms</h2>
-    </div>
-
-    <EmptyState
-      v-if="forms.length === 0"
-      icon="form"
-      message="No forms created yet. Create your first form to get started."
-      actionLabel="Create Form"
-      :actionClick="() => (showAddFormModal = true)"
-    />
-
-    <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <NuxtLink
-        v-for="form in forms"
-        :key="form.id"
-        :to="`/websites/${website.id}/forms/${form.id}`"
-        class="card hover:shadow-lg transition-shadow duration-200"
-      >
-        <h3 class="text-lg font-semibold text-bermuda-700 mb-2">{{ form.name }}</h3>
-        <div class="flex justify-between items-center">
-          <div class="text-sm text-bermuda-600">{{ form.responseCount }} responses</div>
-          <div class="text-sm text-bermuda-500">Created {{ form.createdAt }}</div>
         </div>
-      </NuxtLink>
-    </div>
+      </div>
 
-    <!-- Add Form Modal -->
-    <Teleport to="body">
-      <div v-if="showAddFormModal" class="modal-backdrop">
-        <div class="modal-content max-w-md w-full">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold text-bermuda-800">Create New Form</h2>
-            <button @click="showAddFormModal = false" class="text-bermuda-400 hover:text-bermuda-600">
-              <span class="sr-only">Close</span>
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      <div class="mb-4">
+        <h2 class="text-xl font-bold text-bermuda-800 mb-4">Forms</h2>
+      </div>
+
+      <EmptyState
+        v-if="forms.length === 0"
+        icon="form"
+        message="No forms created yet. Create your first form to get started."
+        actionLabel="Create Form"
+        :actionClick="() => (showAddFormModal = true)"
+      />
+
+      <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <NuxtLink
+          v-for="form in forms"
+          :key="form.id"
+          :to="`/websites/${website.id}/forms/${form.id}`"
+          class="card hover:shadow-lg transition-shadow duration-200"
+        >
+          <h3 class="text-lg font-semibold text-bermuda-700 mb-2">{{ form.name }}</h3>
+          <div class="flex justify-between items-center">
+            <div class="text-sm text-bermuda-600">{{ form.responseCount }} responses</div>
+            <div class="text-sm text-bermuda-500">Created {{ form.createdAt }}</div>
           </div>
-
-          <form @submit.prevent="addForm" class="space-y-4">
-            <div>
-              <label for="form-name" class="block text-sm font-medium text-bermuda-700">Form Name</label>
-              <input id="form-name" v-model="newForm.name" type="text" required class="form-input" />
-            </div>
-
-            <div class="flex justify-end space-x-3 mt-6">
-              <button type="button" @click="showAddFormModal = false" class="btn-secondary">Cancel</button>
-              <button type="submit" class="btn-primary">Create Form</button>
-            </div>
-          </form>
-        </div>
+        </NuxtLink>
       </div>
-    </Teleport>
+
+      <!-- Edit Website Modal -->
+      <Teleport to="body">
+        <div v-if="showEditWebsiteModal" class="modal-backdrop">
+          <div class="modal-content max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold text-bermuda-800">Edit Website</h2>
+              <button @click="closeEditModal" class="text-bermuda-400 hover:text-bermuda-600">
+                <span class="sr-only">Close</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form @submit.prevent="handleUpdateWebsite" class="space-y-4">
+              <div>
+                <label for="edit-name" class="block text-sm font-medium text-bermuda-700">Website Name</label>
+                <input id="edit-name" v-model="editWebsiteData.name" type="text" required class="form-input" />
+                <p v-if="editErrors.name" class="mt-1 text-sm text-red-600">{{ editErrors.name }}</p>
+              </div>
+
+              <div>
+                <label for="edit-domain" class="block text-sm font-medium text-bermuda-700">Domain</label>
+                <input
+                  id="edit-domain"
+                  v-model="editWebsiteData.domain"
+                  type="url"
+                  required
+                  placeholder="https://example.com"
+                  class="form-input"
+                />
+                <p v-if="editErrors.domain" class="mt-1 text-sm text-red-600">{{ editErrors.domain }}</p>
+              </div>
+
+              <div v-if="editError" class="bg-red-50 p-3 rounded text-red-600 text-sm">
+                {{ editError }}
+              </div>
+
+              <div class="flex space-x-3">
+                <button
+                  type="button"
+                  @click="confirmDelete"
+                  class="btn-danger"
+                  :disabled="editLoading || deleteLoading"
+                >
+                  <span v-if="deleteLoading">Deleting...</span>
+                  <span v-else>Delete Website</span>
+                </button>
+                <div class="flex-grow"></div>
+                <button type="button" @click="closeEditModal" class="btn-secondary" :disabled="editLoading">
+                  Cancel
+                </button>
+                <button type="submit" class="btn-primary" :disabled="editLoading">
+                  <span v-if="editLoading">Saving...</span>
+                  <span v-else>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Teleport>
+
+      <!-- Add Form Modal -->
+      <Teleport to="body">
+        <div v-if="showAddFormModal" class="modal-backdrop">
+          <div class="modal-content max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold text-bermuda-800">Create New Form</h2>
+              <button @click="showAddFormModal = false" class="text-bermuda-400 hover:text-bermuda-600">
+                <span class="sr-only">Close</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form @submit.prevent="addForm" class="space-y-4">
+              <div>
+                <label for="form-name" class="block text-sm font-medium text-bermuda-700">Form Name</label>
+                <input id="form-name" v-model="newForm.name" type="text" required class="form-input" />
+              </div>
+
+              <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" @click="showAddFormModal = false" class="btn-secondary">Cancel</button>
+                <button type="submit" class="btn-primary">Create Form</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Teleport>
+
+      <!-- Delete Confirmation Modal -->
+      <Teleport to="body">
+        <div v-if="showDeleteConfirmModal" class="modal-backdrop">
+          <div class="modal-content max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold text-red-600">Delete Website</h2>
+              <button @click="showDeleteConfirmModal = false" class="text-bermuda-400 hover:text-bermuda-600">
+                <span class="sr-only">Close</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="mb-6">
+              <p class="text-gray-700">
+                Are you sure you want to delete this website? This action cannot be undone and will delete all forms and
+                submissions associated with this website.
+              </p>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+              <button
+                type="button"
+                @click="showDeleteConfirmModal = false"
+                class="btn-secondary"
+                :disabled="deleteLoading"
+              >
+                Cancel
+              </button>
+              <button type="button" @click="handleDeleteWebsite" class="btn-danger" :disabled="deleteLoading">
+                <span v-if="deleteLoading">Deleting...</span>
+                <span v-else>Yes, Delete Website</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </Teleport>
+    </template>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { updateWebsiteSchema, type Website } from '~/shared/schemas/website';
+
 const route = useRoute();
-const websiteId = route.params.id;
+const router = useRouter();
+const websiteId = route.params.id as string;
+const { isLoading, error, getWebsite, updateWebsite, deleteWebsite } = useWebsites();
 
-// In a real app, these would be fetched from the backend
-const website = ref({
-  id: websiteId,
-  name: 'My Portfolio',
-  domain: 'https://portfolio.example.com',
-});
-
+const website = ref<Website | null>(null);
 const forms = ref([
   { id: '1', name: 'Contact Form', responseCount: 12, createdAt: '2023-05-10' },
   { id: '2', name: 'Newsletter Signup', responseCount: 45, createdAt: '2023-06-22' },
 ]);
 
+// Modal states
+const showAddFormModal = ref(false);
+const showEditWebsiteModal = ref(false);
+const showDeleteConfirmModal = ref(false);
+
+// Form states
+const newForm = reactive({
+  name: '',
+});
+
+const editWebsiteData = reactive({
+  name: '',
+  domain: '',
+});
+
+const editErrors = ref<Record<string, string>>({});
+const editError = ref('');
+const editLoading = ref(false);
+const deleteLoading = ref(false);
+
+// Computed values
 const formEndpoint = computed(() => {
   return `https://api.unform.example/submit/${websiteId}`;
 });
 
-const showAddFormModal = ref(false);
-const newForm = reactive({
-  name: '',
+// Load website data
+async function loadWebsite() {
+  const data = await getWebsite(websiteId);
+  if (data) {
+    website.value = data;
+    // Initialize edit form with current data
+    editWebsiteData.name = data.name;
+    editWebsiteData.domain = data.domain;
+  }
+}
+
+// Initialize data on page load
+onMounted(async () => {
+  await loadWebsite();
 });
+
+function closeEditModal() {
+  showEditWebsiteModal.value = false;
+  editErrors.value = {};
+  editError.value = '';
+  // Reset form to current website data
+  if (website.value) {
+    editWebsiteData.name = website.value.name;
+    editWebsiteData.domain = website.value.domain;
+  }
+}
+
+async function handleUpdateWebsite() {
+  editErrors.value = {};
+  editError.value = '';
+  editLoading.value = true;
+
+  try {
+    // Validate form data
+    updateWebsiteSchema.parse(editWebsiteData);
+
+    // Submit to API
+    const updated = await updateWebsite(websiteId, editWebsiteData);
+    if (updated) {
+      website.value = updated;
+      showEditWebsiteModal.value = false;
+    }
+  } catch (error: any) {
+    // Handle validation errors
+    if (error.errors) {
+      error.errors.forEach((err: any) => {
+        if (err.path && err.path.length > 0) {
+          editErrors.value[err.path[0]] = err.message;
+        }
+      });
+    } else {
+      editError.value = error.message || 'Failed to update website. Please try again.';
+    }
+  } finally {
+    editLoading.value = false;
+  }
+}
+
+function confirmDelete() {
+  showDeleteConfirmModal.value = true;
+}
+
+async function handleDeleteWebsite() {
+  deleteLoading.value = true;
+  try {
+    await deleteWebsite(websiteId);
+    router.push('/websites');
+  } catch (error: any) {
+    // Show error in the edit modal
+    editError.value = error.message || 'Failed to delete website. Please try again.';
+    showDeleteConfirmModal.value = false;
+  } finally {
+    deleteLoading.value = false;
+  }
+}
 
 function addForm() {
   // In a real app, this would send a request to the backend
@@ -127,3 +332,37 @@ function addForm() {
   showAddFormModal.value = false;
 }
 </script>
+
+<style scoped>
+.card {
+  @apply p-6 bg-white rounded-lg shadow-md;
+}
+
+.form-input {
+  @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-bermuda-500 focus:border-bermuda-500 sm:text-sm;
+}
+
+.modal-backdrop {
+  @apply fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white p-6 rounded-lg shadow-xl;
+}
+
+.btn-primary {
+  @apply px-4 py-2 bg-bermuda-500 text-white rounded-md hover:bg-bermuda-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bermuda-500;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-white text-bermuda-700 border border-bermuda-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bermuda-500;
+}
+
+.btn-danger {
+  @apply px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500;
+}
+
+.spinner {
+  @apply h-8 w-8 rounded-full border-4 border-bermuda-200 border-t-bermuda-600 animate-spin;
+}
+</style>
