@@ -25,8 +25,10 @@
           <p class="text-bermuda-600">{{ website.domain }}</p>
         </div>
         <div class="flex space-x-3">
-          <button @click="showEditWebsiteModal = true" class="btn-secondary">Edit Website</button>
-          <button @click="showAddFormModal = true" class="btn-primary">Create New Form</button>
+          <button @click="showEditWebsiteModal = true" class="btn-secondary" :disabled="isLoading">Edit Website</button>
+          <button @click="showAddFormModal = true" class="btn-primary" :disabled="isLoading || formLoading">
+            Create New Form
+          </button>
         </div>
       </div>
 
@@ -141,7 +143,11 @@
           <div class="modal-content max-w-md w-full">
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-xl font-bold text-bermuda-800">Create New Form</h2>
-              <button @click="showAddFormModal = false" class="text-bermuda-400 hover:text-bermuda-600">
+              <button
+                @click="showAddFormModal = false"
+                class="text-bermuda-400 hover:text-bermuda-600"
+                :disabled="formLoading"
+              >
                 <span class="sr-only">Close</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -156,8 +162,13 @@
               </div>
 
               <div class="flex justify-end space-x-3 mt-6">
-                <button type="button" @click="showAddFormModal = false" class="btn-secondary">Cancel</button>
-                <button type="submit" class="btn-primary">Create Form</button>
+                <button type="button" @click="showAddFormModal = false" class="btn-secondary" :disabled="formLoading">
+                  Cancel
+                </button>
+                <button type="submit" class="btn-primary" :disabled="formLoading">
+                  <span v-if="formLoading">Creating...</span>
+                  <span v-else>Create Form</span>
+                </button>
               </div>
             </form>
           </div>
@@ -226,6 +237,7 @@ const showDeleteConfirmModal = ref(false);
 const newForm = reactive({
   name: '',
 });
+const formLoading = ref(false);
 
 const editWebsiteData = reactive({
   name: '',
@@ -315,6 +327,7 @@ async function handleDeleteWebsite() {
 }
 
 async function addForm() {
+  formLoading.value = true;
   try {
     await createForm(newForm);
     // Reset form and close modal
@@ -322,6 +335,8 @@ async function addForm() {
     showAddFormModal.value = false;
   } catch (error: any) {
     console.error('Failed to create form:', error);
+  } finally {
+    formLoading.value = false;
   }
 }
 </script>

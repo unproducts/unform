@@ -2,7 +2,7 @@
   <div>
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-2xl font-bold text-bermuda-800">Your Websites</h1>
-      <button @click="showAddWebsiteModal = true" class="btn-primary">Add Website</button>
+      <button @click="showAddWebsiteModal = true" class="btn-primary" :disabled="isLoading">Add Website</button>
     </div>
 
     <div v-if="isLoading" class="flex justify-center py-8">
@@ -47,7 +47,7 @@
         <div class="modal-content max-w-md w-full">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold text-bermuda-800">Add New Website</h2>
-            <button @click="closeModal" class="text-bermuda-400 hover:text-bermuda-600">
+            <button @click="closeModal" class="text-bermuda-400 hover:text-bermuda-600" :disabled="formLoading">
               <span class="sr-only">Close</span>
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

@@ -48,19 +48,20 @@
     <p class="text-bermuda-600 mb-4">{{ message }}</p>
 
     <slot name="action">
-      <button v-if="actionLabel && actionClick" @click="actionClick" class="btn-primary">
+      <!-- @vue-expect-error -->
+      <button v-if="actionLabel && !!actionClick" @click="actionClick" class="btn-primary">
         {{ actionLabel }}
       </button>
     </slot>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps({
   icon: {
     type: String,
     default: 'form',
-    validator: (value) => ['form', 'website', 'response'].includes(value),
+    validator: (value: string) => ['form', 'website', 'response'].includes(value),
   },
   message: {
     type: String,

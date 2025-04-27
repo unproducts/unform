@@ -40,5 +40,6 @@ export default defineNuxtConfig({
       password: 'postgrespw',
       database: 'unform',
     },
+    delayResponse: false,
   },
 });

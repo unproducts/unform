@@ -23,7 +23,9 @@
           <h1 class="text-2xl font-bold text-bermuda-800 mb-1">{{ form.name }}</h1>
           <p class="text-bermuda-600">{{ responses.length }} total responses</p>
         </div>
-        <button @click="showEditFormModal = true" class="btn-secondary">Edit Form</button>
+        <button @click="showEditFormModal = true" class="btn-secondary" :disabled="isLoading || editLoading">
+          Edit Form
+        </button>
       </div>
 
       <div class="card mb-8">
@@ -63,11 +65,22 @@
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-bermuda-800">Responses</h2>
         <div class="flex space-x-2">
-          <button class="btn-primary" @click="exportResponses">Export CSV</button>
+          <button class="btn-primary" @click="exportResponses" :disabled="isLoading || responsesLoading">
+            Export CSV
+          </button>
         </div>
       </div>
 
-      <EmptyState v-if="responses.length === 0" icon="response" message="No responses received yet." />
+      <div v-if="responsesLoading" class="flex justify-center py-8">
+        <div class="spinner"></div>
+      </div>
+
+      <div v-else-if="responsesError" class="bg-red-50 p-4 rounded-md text-red-600 mb-6">
+        {{ responsesError }}
+        <button @click="fetchResponses" class="text-red-700 underline ml-2">Try again</button>
+      </div>
+
+      <EmptyState v-else-if="responses.length === 0" icon="response" message="No responses received yet." />
 
       <div v-else>
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -116,13 +129,17 @@
                     :key="field"
                     class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
                   >
-                    {{ response.data[field] || '-' }}
+                    {{ (response.data && response.data[field]) || '-' }}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button @click="viewResponseDetails(response)" class="text-bermuda-600 hover:text-bermuda-800">
                       View
                     </button>
-                    <button @click="deleteResponse(response.id)" class="ml-4 text-red-600 hover:text-red-900">
+                    <button
+                      @click="deleteResponse(response.id)"
+                      class="ml-4 text-red-600 hover:text-red-900"
+                      :disabled="deleteResponseLoading"
+                    >
                       Delete
                     </button>
                   </td>
@@ -171,7 +188,7 @@
           <div class="modal-content max-w-md w-full">
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-xl font-bold text-bermuda-800">Edit Form</h2>
-              <button @click="closeEditModal" class="text-bermuda-400 hover:text-bermuda-600">
+              <button @click="closeEditModal" class="text-bermuda-400 hover:text-bermuda-600" :disabled="editLoading">
                 <span class="sr-only">Close</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -220,7 +237,11 @@
           <div class="modal-content max-w-md w-full">
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-xl font-bold text-red-600">Delete Form</h2>
-              <button @click="showDeleteConfirmModal = false" class="text-bermuda-400 hover:text-bermuda-600">
+              <button
+                @click="showDeleteConfirmModal = false"
+                class="text-bermuda-400 hover:text-bermuda-600"
+                :disabled="deleteLoading"
+              >
                 <span class="sr-only">Close</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -312,83 +333,56 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, computed, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useWebsites } from '~/composables/websites';
 import { useForms } from '~/composables/forms';
-import { updateFormSchema } from '~/shared/schemas/form';
+import { useFormResponses } from '~/composables/form-responses';
+import { updateFormSchema, type Form } from '~/shared/schemas/form';
+import type { Website } from '~/shared/schemas/website';
 
 const route = useRoute();
 const router = useRouter();
-const websiteId = route.params.id;
-const formId = route.params.formId;
+const websiteId = route.params.id as string;
+const formId = route.params.formId as string;
 
 // Use composables
 const { getWebsite } = useWebsites();
 const { getForm, updateForm, deleteForm } = useForms(websiteId);
+const {
+  responses,
+  isLoading: responsesLoading,
+  error: responsesError,
+  fetchResponses,
+  deleteResponse: apiDeleteResponse,
+  exportResponsesAsCSV,
+} = useFormResponses(websiteId, formId);
 
 // State management
-const website = ref({});
-const form = ref({});
+const website = ref<Website>({} as Website);
+const form = ref<Form>({} as Form);
 const isLoading = ref(true);
-const error = ref(null);
+const error = ref<string | null>(null);
 
 // Modal states
 const showResponseModal = ref(false);
 const showEditFormModal = ref(false);
 const showDeleteConfirmModal = ref(false);
 const showCodePreviewModal = ref(false);
+const deleteResponseLoading = ref(false);
 
 // Edit form states
 const editFormData = reactive({
   name: '',
 });
-const editErrors = ref({});
+const editErrors = ref<Record<string, string>>({});
 const editError = ref('');
 const editLoading = ref(false);
 const deleteLoading = ref(false);
 
 // Response-related state
-const selectedResponse = ref(null);
-
-// In a real app, these would be fetched from an API for form responses
-// Since we don't have a form responses endpoint yet, we'll use dummy data for responses
-const responses = ref([
-  {
-    id: '1',
-    formId,
-    data: {
-      name: 'John Doe',
-      email: 'john@example.com',
-      message: 'Hello, I would like to discuss a project!',
-    },
-    createdAt: '2023-09-15T14:30:00Z',
-    updatedAt: '2023-09-15T14:30:00Z',
-  },
-  {
-    id: '2',
-    formId,
-    data: {
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      message: 'I am interested in your services.',
-    },
-    createdAt: '2023-09-16T10:15:00Z',
-    updatedAt: '2023-09-16T10:15:00Z',
-  },
-  {
-    id: '3',
-    formId,
-    data: {
-      name: 'Robert Johnson',
-      email: 'robert@example.com',
-      message: 'Can you provide a quote for my project?',
-    },
-    createdAt: '2023-09-18T08:45:00Z',
-    updatedAt: '2023-09-18T08:45:00Z',
-  },
-]);
+const selectedResponse = ref<any>(null);
 
 const formEndpoint = computed(() => {
   return `https://api.unform.example/submit/${websiteId}/${formId}`;
@@ -411,7 +405,10 @@ onMounted(async () => {
       // Initialize edit form with current data
       editFormData.name = formData.name;
     }
-  } catch (err) {
+
+    // Load responses after form data
+    await fetchResponses();
+  } catch (err: any) {
     error.value = err.message || 'Failed to load data';
     console.error('Error loading data:', err);
   } finally {
@@ -421,9 +418,11 @@ onMounted(async () => {
 
 // Extract unique fields from all responses
 const formFields = computed(() => {
-  const fields = new Set();
+  const fields = new Set<string>();
   responses.value.forEach((response) => {
-    Object.keys(response.data).forEach((key) => fields.add(key));
+    if (response.data && typeof response.data === 'object') {
+      Object.keys(response.data).forEach((key) => fields.add(key));
+    }
   });
   return Array.from(fields);
 });
@@ -454,10 +453,10 @@ async function handleUpdateForm() {
       form.value = updated;
       showEditFormModal.value = false;
     }
-  } catch (error) {
+  } catch (error: any) {
     // Handle validation errors
     if (error.errors) {
-      error.errors.forEach((err) => {
+      error.errors.forEach((err: any) => {
         if (err.path && err.path.length > 0) {
           editErrors.value[err.path[0]] = err.message;
         }
@@ -479,7 +478,7 @@ async function handleDeleteForm() {
   try {
     await deleteForm(formId);
     router.push(`/websites/${websiteId}`);
-  } catch (error) {
+  } catch (error: any) {
     // Show error in the edit modal
     editError.value = error.message || 'Failed to delete form. Please try again.';
     showDeleteConfirmModal.value = false;
@@ -489,22 +488,26 @@ async function handleDeleteForm() {
 }
 
 // Response-related methods
-function viewResponseDetails(response) {
+function viewResponseDetails(response: any) {
   selectedResponse.value = response;
   showResponseModal.value = true;
 }
 
-function deleteResponse(id) {
-  // In a real app, this would send a request to the backend
-  const index = responses.value.findIndex((response) => response.id === id);
-  if (index !== -1) {
-    responses.value.splice(index, 1);
+async function deleteResponse(id: string) {
+  deleteResponseLoading.value = true;
+  try {
+    await apiDeleteResponse(id);
+  } catch (error: any) {
+    console.error(`Error deleting response ${id}:`, error);
+  } finally {
+    deleteResponseLoading.value = false;
   }
 }
 
 function exportResponses() {
-  // In a real app, this would generate and download a CSV file
-  alert('Exporting responses as CSV...');
+  const data = exportResponsesAsCSV();
+  // In a real implementation, this would generate and download a CSV file
+  alert(`Exporting ${data.length} responses as CSV...`);
 }
 
 function copyEndpoint() {
@@ -512,11 +515,11 @@ function copyEndpoint() {
   alert(`Copied to clipboard: ${formEndpoint.value}`);
 }
 
-function formatDate(dateString) {
+function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString();
 }
 
-function formatTime(dateString) {
+function formatTime(dateString: string) {
   return new Date(dateString).toLocaleTimeString();
 }
 </script>

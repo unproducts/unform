@@ -20,9 +20,7 @@ export const websitesTable = pgTable('websites', {
   id: defaultUuidPkField(),
   domain: varchar('domain', { length: 255 }).notNull(),
   name: varchar('name', { length: 255 }).notNull(),
-  adminId: uuid('admin_id')
-    .notNull()
-    .references(() => adminsTable.id),
+  adminId: uuid('admin_id').references(() => adminsTable.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -35,7 +33,7 @@ export const formsTable = pgTable('forms', {
     .references(() => adminsTable.id),
   websiteId: uuid('website_id')
     .notNull()
-    .references(() => websitesTable.id),
+    .references(() => websitesTable.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -50,7 +48,7 @@ export const formResponsesTable = pgTable('form_responses', {
     .references(() => websitesTable.id),
   formId: uuid('form_id')
     .notNull()
-    .references(() => formsTable.id),
+    .references(() => formsTable.id, { onDelete: 'cascade' }),
   data: json('data').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
