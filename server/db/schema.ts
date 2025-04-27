@@ -53,5 +53,4 @@ export const formResponsesTable = pgTable('form_responses', {
     .references(() => formsTable.id),
   data: json('data').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
