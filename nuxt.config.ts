@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
+  future: {
+    compatibilityVersion: 4,
+  },
+  compatibilityDate: '2025-04-27',
   devtools: { enabled: true },
   modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxtjs/tailwindcss', 'nuxt-auth-utils'],
   css: ['~/assets/css/main.css'],
@@ -19,7 +22,7 @@ export default defineNuxtConfig({
   ssr: false,
   nitro: {
     imports: {
-      dirs: ['server/utils/**/*.ts'],
+      dirs: ['~~/server/utils/**/*.ts'],
     },
   },
   app: {

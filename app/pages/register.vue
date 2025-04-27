@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { registerSchema } from '~/shared/schemas/authentication';
+import { registerSchema } from '~~/shared/schemas/authentication';
 
 const router = useRouter();
 const { register } = useRegister();

@@ -339,8 +339,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { useWebsites } from '~/composables/websites';
 import { useForms } from '~/composables/forms';
 import { useFormResponses } from '~/composables/form-responses';
-import { updateFormSchema, type Form } from '~/shared/schemas/form';
-import type { Website } from '~/shared/schemas/website';
+import { updateFormSchema, type Form } from '~~/shared/schemas/form';
+import type { Website } from '~~/shared/schemas/website';
 
 const route = useRoute();
 const router = useRouter();

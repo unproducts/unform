@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { formsTable } from '~/server/db/schema';
-import authenticateRequest from '~/server/utils/auth';
-import { Form } from '~/shared/schemas/form';
+import { formsTable } from '~~/server/db/schema';
+import authenticateRequest from '~~/server/utils/auth';
+import { Form } from '~~/shared/schemas/form';
 
 export default defineEventHandler(async (event) => {
   await authenticateRequest(event);

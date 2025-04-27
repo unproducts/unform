@@ -218,7 +218,7 @@
 </template>
 
 <script setup lang="ts">
-import { updateWebsiteSchema, type Website } from '~/shared/schemas/website';
+import { updateWebsiteSchema, type Website } from '~~/shared/schemas/website';
 
 const route = useRoute();
 const router = useRouter();

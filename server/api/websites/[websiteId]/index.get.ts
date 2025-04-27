@@ -1,7 +1,7 @@
 import { websitesTable } from '~~/server/db/schema';
 import authenticateRequest from '~~/server/utils/auth';
 import { and, eq } from 'drizzle-orm';
-import { Website } from '~/shared/schemas/website';
+import { Website } from '~~/shared/schemas/website';
 
 export default defineEventHandler(async (event) => {
   const { websiteId } = getRouterParams(event);

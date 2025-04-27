@@ -1,7 +1,7 @@
 import { formsTable } from '~~/server/db/schema';
 import authenticateRequest from '~~/server/utils/auth';
 import { and, eq } from 'drizzle-orm';
-import { Form } from '~/shared/schemas/form';
+import { Form } from '~~/shared/schemas/form';
 
 export default defineEventHandler(async (event) => {
   const { formId, websiteId } = getRouterParams(event);

@@ -1,6 +1,6 @@
-import authenticateRequest from '~/server/utils/auth';
-import { createFormSchema, Form } from '~/shared/schemas/form';
-import { formsTable } from '~/server/db/schema';
+import authenticateRequest from '~~/server/utils/auth';
+import { createFormSchema, Form } from '~~/shared/schemas/form';
+import { formsTable } from '~~/server/db/schema';
 
 export default defineEventHandler(async (event) => {
   const { websiteId } = getRouterParams(event);

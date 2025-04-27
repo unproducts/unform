@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { createWebsiteSchema } from '~/shared/schemas/website';
+import { createWebsiteSchema } from '~~/shared/schemas/website';
 
 const { websites, isLoading, error, fetchWebsites, createWebsite } = useWebsites();
 

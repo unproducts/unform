@@ -1,4 +1,4 @@
-import authenticateRequest from '~/server/utils/auth';
+import authenticateRequest from '~~/server/utils/auth';
 import { createWebsiteSchema, Website } from '~~/shared/schemas/website';
 import { websitesTable } from '~~/server/db/schema';
 

@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { type FormResponse, type FormResponses } from '~/shared/schemas/form-response';
+import { type FormResponse, type FormResponses } from '~~/shared/schemas/form-response';
 
 /**
  * Composable for managing form responses

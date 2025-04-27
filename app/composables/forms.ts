@@ -1,4 +1,4 @@
-import { createFormSchema, updateFormSchema, type Form } from '~/shared/schemas/form';
+import { createFormSchema, updateFormSchema, type Form } from '~~/shared/schemas/form';
 
 /**
  * Composable for managing forms data and operations

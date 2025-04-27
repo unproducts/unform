@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { loginSchema } from '~/shared/schemas/authentication';
+import { loginSchema } from '~~/shared/schemas/authentication';
 
 const router = useRouter();
 const { login } = useLogin();

@@ -1,4 +1,4 @@
-import { createWebsiteSchema, updateWebsiteSchema, type Website } from '~/shared/schemas/website';
+import { createWebsiteSchema, updateWebsiteSchema, type Website } from '~~/shared/schemas/website';
 
 /**
  * Composable for managing websites data and operations
