@@ -15,16 +15,17 @@ export const adminsTable = pgTable('admins', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
-export type Admin = typeof adminsTable.$inferSelect;
 
 export const websitesTable = pgTable('websites', {
   id: defaultUuidPkField(),
   domain: varchar('domain', { length: 255 }).notNull(),
   name: varchar('name', { length: 255 }).notNull(),
+  adminId: uuid('admin_id')
+    .notNull()
+    .references(() => adminsTable.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
-export type Website = typeof websitesTable.$inferSelect;
 
 export const formsTable = pgTable('forms', {
   id: defaultUuidPkField(),
@@ -35,7 +36,6 @@ export const formsTable = pgTable('forms', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
-export type Form = typeof formsTable.$inferSelect;
 
 export const formResponsesTable = pgTable('form_responses', {
   id: defaultUuidPkField(),
@@ -46,4 +46,3 @@ export const formResponsesTable = pgTable('form_responses', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
-export type FormResponse = typeof formResponsesTable.$inferSelect;

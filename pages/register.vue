@@ -2,6 +2,8 @@
 import { registerSchema } from '~/shared/schemas/authentication';
 
 const router = useRouter();
+const { register } = useRegister();
+
 const name = ref('');
 const email = ref('');
 const password = ref('');
@@ -23,11 +25,7 @@ async function handleRegister() {
     isLoading.value = true;
 
     try {
-      await $fetch('/api/register', {
-        method: 'POST',
-        body: formData,
-      });
-
+      await register(formData);
       router.push('/websites');
     } catch (error: any) {
       if (error.response) {

@@ -9,14 +9,30 @@ export function useLogout() {
 
 export function useLogin() {
   const { tryLoadSession } = useSessionLoader();
+  const { fetch: fetchSession } = useUserSession();
   const login = async (formData: { email: string; password: string }) => {
     await $fetch('/api/login', {
       method: 'POST',
       body: formData,
     });
+    await fetchSession();
     await tryLoadSession();
   };
   return { login };
+}
+
+export function useRegister() {
+  const { tryLoadSession } = useSessionLoader();
+  const { fetch: fetchSession } = useUserSession();
+  const register = async (formData: { name: string; email: string; password: string }) => {
+    await $fetch('/api/register', {
+      method: 'POST',
+      body: formData,
+    });
+    await fetchSession();
+    await tryLoadSession();
+  };
+  return { register };
 }
 
 export function useSessionLoader() {
@@ -27,13 +43,11 @@ export function useSessionLoader() {
       if (user) {
         userState.value = {
           ...user,
-          createdAt: new Date(user.createdAt),
-          updatedAt: new Date(user.updatedAt),
         };
       } else {
         userState.value = null;
       }
-    } catch (error) {}
+    } catch (error) {} // Shelved error since it might be called from unauthenticated pages, in which case it's expected
   };
 
   return { tryLoadSession: _tryLoadSession };

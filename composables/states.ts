@@ -1,7 +1,7 @@
-import type { Admin } from '~/server/db/schema';
+import type { User } from '~~/shared/schemas/authentication';
 
 export function useAuthenticatedUserState() {
-  const userState = useState<Admin | null>('auth__user');
+  const userState = useState<User | null>('auth__user');
 
   return userState;
 }

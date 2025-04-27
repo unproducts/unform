@@ -1,6 +1,7 @@
 import { H3Event } from 'h3';
-import { adminsTable, type Admin } from '../db/schema';
+import { adminsTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { User } from '~~/shared/schemas/authentication';
 
 export type Credentials = {
   token: string;
@@ -14,7 +15,7 @@ export function createUnauthorisedError() {
   });
 }
 
-export default async function authenticateRequest(event: H3Event): Promise<{ user: Admin }> {
+export default async function authenticateRequest(event: H3Event): Promise<{ user: User }> {
   const session = await requireUserSession(event);
 
   if (IS_DEV) {
@@ -30,5 +31,5 @@ export default async function authenticateRequest(event: H3Event): Promise<{ use
 
   // @ts-expect-error password deleted, but type says otherwise.
   delete user.password;
-  return { user };
+  return { user: user as unknown as User };
 }
