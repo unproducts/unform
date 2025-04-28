@@ -30,12 +30,14 @@
 
       <div class="card mb-8">
         <h2 class="text-lg font-medium text-bermuda-700 mb-4">Form Endpoint</h2>
-        <div class="bg-bermuda-50 p-4 rounded-md flex items-center justify-between">
-          <code class="text-sm text-bermuda-700">{{ formEndpoint }}</code>
+        <div
+          class="bg-bermuda-50 p-4 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+        >
+          <code class="text-sm text-bermuda-700 break-all">{{ formEndpoint }}</code>
           <div class="flex space-x-2">
             <button
               @click="showCodePreviewModal = true"
-              class="text-bermuda-600 hover:text-bermuda-800 flex items-center"
+              class="text-bermuda-600 hover:text-bermuda-800 flex items-center hidden sm:flex"
               title="Preview integration code"
             >
               <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,64 +86,38 @@
 
       <div v-else>
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-bermuda-200">
+          <div class="table-container">
+            <table class="table">
               <thead class="bg-bermuda-50">
                 <tr>
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-bermuda-700 uppercase tracking-wider"
-                  >
-                    ID
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-bermuda-700 uppercase tracking-wider"
-                  >
-                    Date
-                  </th>
-                  <th
-                    v-for="field in formFields"
-                    :key="field"
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-bermuda-700 uppercase tracking-wider"
-                  >
+                  <th scope="col">ID</th>
+                  <th scope="col">Date</th>
+                  <th v-for="field in formFields" :key="field" scope="col">
                     {{ field }}
                   </th>
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Actions
-                  </th>
+                  <th scope="col" class="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-for="response in responses" :key="response.id">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ response.id }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ formatDate(response.createdAt) }}
-                  </td>
-                  <td
-                    v-for="field in formFields"
-                    :key="field"
-                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                  >
+                  <td>{{ response.id }}</td>
+                  <td>{{ formatDate(response.createdAt) }}</td>
+                  <td v-for="field in formFields" :key="field">
                     {{ (response.data && response.data[field]) || '-' }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button @click="viewResponseDetails(response)" class="text-bermuda-600 hover:text-bermuda-800">
-                      View
-                    </button>
-                    <button
-                      @click="deleteResponse(response.id)"
-                      class="ml-4 text-red-600 hover:text-red-900"
-                      :disabled="deleteResponseLoading"
-                    >
-                      Delete
-                    </button>
+                  <td class="text-right">
+                    <div class="flex justify-end space-x-2">
+                      <button @click="viewResponseDetails(response)" class="text-bermuda-600 hover:text-bermuda-800">
+                        View
+                      </button>
+                      <button
+                        @click="deleteResponse(response.id)"
+                        class="text-red-600 hover:text-red-900"
+                        :disabled="deleteResponseLoading"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>

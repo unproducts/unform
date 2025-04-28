@@ -1,9 +1,9 @@
 <template>
   <div class="flex items-center justify-center min-h-screen bg-bermuda-50 px-4">
     <div class="text-center">
-      <div class="text-6xl font-bold text-bermuda-600 mb-4">{{ error.statusCode }}</div>
-      <h1 class="text-3xl font-bold text-bermuda-800 mb-4">{{ errorMessage }}</h1>
-      <p class="text-bermuda-600 mb-8">{{ errorDescription }}</p>
+      <div class="text-4xl md:text-6xl font-bold text-bermuda-600 mb-3 md:mb-4">{{ error.statusCode }}</div>
+      <h1 class="text-2xl md:text-3xl font-bold text-bermuda-800 mb-3 md:mb-4">{{ errorMessage }}</h1>
+      <p class="text-sm md:text-base text-bermuda-600 mb-6 md:mb-8">{{ errorDescription }}</p>
       <button @click="handleError" class="btn-primary">Back to Home</button>
     </div>
   </div>

@@ -5,6 +5,7 @@
 @layer base {
   html {
     font-family: 'Outfit', sans-serif;
+    -webkit-text-size-adjust: 100%;
   }
 
   h1,
@@ -15,32 +16,76 @@
   h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
+
+  /* Mobile-first text sizes */
+  h1 {
+    @apply text-2xl md:text-4xl;
+  }
+  h2 {
+    @apply text-xl md:text-3xl;
+  }
+  h3 {
+    @apply text-lg md:text-2xl;
+  }
+  p {
+    @apply text-sm md:text-base;
+  }
 }
 
+/* Mobile-friendly form inputs */
 .form-input {
-  @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-bermuda-500 focus:border-bermuda-500 sm:text-sm;
+  @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-bermuda-500 focus:border-bermuda-500 text-sm md:text-base;
 }
 
+/* Mobile-friendly buttons */
 .btn-primary {
-  @apply px-4 py-2 bg-bermuda-500 text-white rounded-md hover:bg-bermuda-600 transition-colors duration-200;
+  @apply px-3 py-2 md:px-4 md:py-2 bg-bermuda-500 text-white rounded-md hover:bg-bermuda-600 transition-colors duration-200 text-sm md:text-base;
 }
 
 .btn-secondary {
-  @apply px-4 py-2 border border-bermuda-200 rounded-md text-bermuda-700 bg-white hover:bg-bermuda-50;
+  @apply px-3 py-2 md:px-4 md:py-2 border border-bermuda-200 rounded-md text-bermuda-700 bg-white hover:bg-bermuda-50 text-sm md:text-base;
 }
 
 .btn-danger {
-  @apply px-4 py-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500;
+  @apply px-3 py-2 md:px-4 md:py-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm md:text-base;
 }
 
+/* Mobile-friendly cards */
 .card {
-  @apply bg-white rounded-lg shadow-md p-6;
+  @apply bg-white rounded-lg shadow-md p-4 md:p-6;
 }
 
+/* Mobile-friendly modals */
 .modal-backdrop {
   @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
 }
 
 .modal-content {
-  @apply bg-white rounded-lg shadow-xl p-6;
+  @apply bg-white rounded-lg shadow-xl p-4 md:p-6 w-full max-w-md mx-auto;
+}
+
+/* Mobile-friendly tables */
+.table-container {
+  @apply overflow-x-auto -mx-4 sm:mx-0;
+}
+
+.table {
+  @apply min-w-full divide-y divide-bermuda-200;
+}
+
+.table th {
+  @apply px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-bermuda-700 uppercase tracking-wider;
+}
+
+.table td {
+  @apply px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500;
+}
+
+/* Mobile-friendly spacing */
+.section-padding {
+  @apply py-6 md:py-8;
+}
+
+.container-padding {
+  @apply px-4 md:px-6;
 }

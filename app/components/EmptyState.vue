@@ -1,8 +1,8 @@
 <template>
-  <div class="text-center py-12 bg-white rounded-lg shadow-md">
+  <div class="text-center py-8 md:py-12 bg-white rounded-lg shadow-md">
     <svg
       v-if="icon === 'form'"
-      class="h-20 w-20 text-bermuda-300 mx-auto mb-4"
+      class="h-16 w-16 md:h-20 md:w-20 text-bermuda-300 mx-auto mb-3 md:mb-4"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -17,7 +17,7 @@
 
     <svg
       v-else-if="icon === 'website'"
-      class="h-20 w-20 text-bermuda-300 mx-auto mb-4"
+      class="h-16 w-16 md:h-20 md:w-20 text-bermuda-300 mx-auto mb-3 md:mb-4"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -32,7 +32,7 @@
 
     <svg
       v-else-if="icon === 'response'"
-      class="h-20 w-20 text-bermuda-300 mx-auto mb-4"
+      class="h-16 w-16 md:h-20 md:w-20 text-bermuda-300 mx-auto mb-3 md:mb-4"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -45,7 +45,7 @@
       />
     </svg>
 
-    <p class="text-bermuda-600 mb-4">{{ message }}</p>
+    <p class="text-sm md:text-base text-bermuda-600 mb-3 md:mb-4">{{ message }}</p>
 
     <slot name="action">
       <!-- @vue-expect-error -->

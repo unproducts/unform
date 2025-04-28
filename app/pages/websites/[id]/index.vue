@@ -44,18 +44,18 @@
         :actionClick="() => (showAddFormModal = true)"
       />
 
-      <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div v-else class="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <NuxtLink
           v-for="form in forms"
           :key="form.id"
           :to="`/websites/${website.id}/forms/${form.id}`"
           class="card hover:shadow-lg transition-shadow duration-200"
         >
-          <h3 class="text-lg font-semibold text-bermuda-700 mb-2">{{ form.name }}</h3>
-          <div class="flex justify-between items-center">
-            <div class="text-sm text-bermuda-600">{{ new Date(form.createdAt).toLocaleDateString() }}</div>
-            <div class="text-sm text-bermuda-500 flex items-center">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base md:text-lg font-semibold text-bermuda-700 mb-2">{{ form.name }}</h3>
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div class="text-xs md:text-sm text-bermuda-600">{{ new Date(form.createdAt).toLocaleDateString() }}</div>
+            <div class="text-xs md:text-sm text-bermuda-500 flex items-center">
+              <svg class="w-3 h-3 md:w-4 md:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -69,7 +69,7 @@
                   d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                 />
               </svg>
-              View Responses
+              <span class="text-xs md:text-sm">View Responses</span>
             </div>
           </div>
         </NuxtLink>
