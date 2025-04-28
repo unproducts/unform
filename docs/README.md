@@ -1,10 +1,9 @@
-<img src="./banner.png">
-
 <div align="center">
-  <img src="../app/assets/icon.png" alt="Unform Logo" width="200">
+  <img src="../app/assets/icon.svg" alt="Unform Logo" width="75">
   <h1>Unform</h1>
-  <p>The Open Source Alternative to Formspree</p>
 </div>
+
+<img src="./banner.png">
 
 <br>
 
@@ -18,7 +17,6 @@ Unform is a simple, open-source alternative to Formspree. It allows you to creat
 - [x] Access control
 - [x] Form management
 - [x] Submission tracking
-- [x] Customizable templates
 
 ## Prerequisites
 
@@ -111,10 +109,6 @@ For bug reports or feature requests, please [open an issue](https://github.com/u
 
 ## Support
 
-If you encounter any problems or have questions, please:
-
-- Check the [documentation](https://github.com/unproducts/unform/wiki)
-- [Open an issue](https://github.com/unproducts/unform/issues)
-- Join our [Discord community](https://discord.gg/unform)
+If you encounter any problems or have questions, please [Open an issue](https://github.com/unproducts/unform/issues)
 
 Built with ❤️ by [@unproducts](https://github.com/unproducts)
