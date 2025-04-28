@@ -3,11 +3,19 @@ import { formsTable, formResponsesTable, websitesTable } from '~~/server/db/sche
 import { useDatabase } from '~~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
+  console.log('handling post request', event);
   const { id: formId } = getRouterParams(event);
 
   const headers = getHeaders(event);
   const origin = headers.origin || headers.referer;
-  const returnURL = (getQuery(event).return as string) || origin;
+  let returnURL = origin;
+  try {
+    if (getQuery(event).return) {
+      returnURL = atob(getQuery(event).return as string);
+    }
+  } catch (e) {
+    console.error('Error decoding return URL:', e);
+  }
 
   const db = await useDatabase();
 
