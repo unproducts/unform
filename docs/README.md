@@ -1,7 +1,3 @@
-<div align="center">
-  <img src="../app/assets/icon.svg" alt="Unform Logo" width="75">
-  <h1>Unform</h1>
-</div>
 
 <img src="./banner.png">
 
