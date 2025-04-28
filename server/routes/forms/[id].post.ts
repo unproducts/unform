@@ -6,8 +6,8 @@ export default defineEventHandler(async (event) => {
   const { id: formId } = getRouterParams(event);
 
   const headers = getHeaders(event);
-  console.log('headers', headers);
   const origin = headers.origin || headers.referer;
+  const returnURL = (getQuery(event).return as string) || origin;
 
   const db = await useDatabase();
 
@@ -72,8 +72,7 @@ export default defineEventHandler(async (event) => {
   if (isApiCall) {
     return { success: true, message: 'Form submission received' };
   } else {
-    const returnURL = headers.referer || headers.origin || website[0].domain;
-    const returnURLObject = new URL(returnURL);
+    const returnURLObject = new URL(returnURL || website[0].domain);
     returnURLObject.searchParams.set('success', 'true');
     return sendRedirect(event, returnURLObject.toString());
   }
