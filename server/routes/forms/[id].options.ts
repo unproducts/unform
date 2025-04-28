@@ -25,14 +25,23 @@ export default defineEventHandler(async (event) => {
   }
 
   const websiteDomain = website[0].domain;
+  const referer = getRequestHeader(event, 'referer');
+  if (!referer) {
+    throw createError({
+      statusCode: 400,
+      message: 'Invalid request',
+    });
+  }
+
+  console.log('websiteDomain', websiteDomain);
+  console.log('referer', referer);
   let originDomain = '';
   try {
-    const originUrl = new URL(origin);
+    const originUrl = new URL(referer);
     originDomain = originUrl.hostname;
-  } catch (e) {
-    console.log('websiteDomain', websiteDomain);
     console.log('originDomain', originDomain);
-    console.error('Error processing OPTIONS request:', e);
+  } catch (e) {
+    console.error('Error processing OPTIONS request for originDomain', originDomain, 'websiteDomain', websiteDomain, e);
     throw createError({
       statusCode: 400,
       message: 'Invalid origin',
@@ -40,8 +49,9 @@ export default defineEventHandler(async (event) => {
   }
 
   if (originDomain.includes(websiteDomain) || websiteDomain.includes(originDomain)) {
+    console.log('setting referer', referer);
     setResponseHeaders(event, {
-      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Origin': referer,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Accept',
       'Access-Control-Max-Age': '86400',
