@@ -33,13 +33,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  console.log('websiteDomain', websiteDomain);
-  console.log('referer', referer);
   let originDomain = '';
   try {
     const originUrl = new URL(referer);
     originDomain = originUrl.hostname;
-    console.log('originDomain', originDomain);
   } catch (e) {
     console.error('Error processing OPTIONS request for originDomain', originDomain, 'websiteDomain', websiteDomain, e);
     throw createError({
@@ -49,11 +46,11 @@ export default defineEventHandler(async (event) => {
   }
 
   if (originDomain.includes(websiteDomain) || websiteDomain.includes(originDomain)) {
-    console.log('setting referer', referer);
+    const origin = new URL(referer).origin;
     setResponseHeaders(event, {
-      'Access-Control-Allow-Origin': referer,
+      'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, X-Requested-With',
       'Access-Control-Max-Age': '86400',
       'Access-Control-Allow-Credentials': 'true',
     });
