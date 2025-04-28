@@ -1,7 +1,7 @@
 <img src="./banner.png">
 
 <div align="center">
-  <img src="../app/assets/logo.png" alt="Unform Logo" width="200">
+  <img src="../app/assets/icon.png" alt="Unform Logo" width="200">
   <h1>Unform</h1>
   <p>The Open Source Alternative to Formspree</p>
 </div>
