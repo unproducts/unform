@@ -23,7 +23,7 @@ export type FormResponses = z.infer<typeof formResponsesSchema>;
 
 export const formDomainSchema = z.object({
   id: z.string().uuid(),
-  domain: z.string().min(1).max(255),
+  domain: z.string().url().min(1).max(255),
   createdAt: z.string().datetime(),
 });
 export type FormDomain = z.infer<typeof formDomainSchema>;

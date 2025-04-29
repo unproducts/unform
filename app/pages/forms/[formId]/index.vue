@@ -23,9 +23,7 @@
           <h1 class="text-2xl font-bold text-bermuda-800 mb-1">{{ form.name }}</h1>
           <p class="text-bermuda-600">{{ responses.length }} total responses</p>
         </div>
-        <button @click="showEditFormModal = true" class="btn-secondary" :disabled="isLoading || editLoading">
-          Edit Form
-        </button>
+        <NuxtLink :to="`/forms/${formId}/preferences`" class="btn-secondary"> Preferences </NuxtLink>
       </div>
 
       <div class="card mb-8">
