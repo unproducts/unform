@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-2xl font-bold text-bermuda-800">Your Websites</h1>
-      <button @click="showAddWebsiteModal = true" class="btn-primary" :disabled="isLoading">Add Website</button>
+      <h1 class="text-2xl font-bold text-bermuda-800">Your Forms</h1>
+      <button @click="showAddFormModal = true" class="btn-primary" :disabled="isLoading">Add Form</button>
     </div>
 
     <div v-if="isLoading" class="flex justify-center py-8">
@@ -11,27 +11,27 @@
 
     <div v-else-if="error" class="bg-red-50 p-4 rounded-md text-red-600 mb-6">
       {{ error }}
-      <button @click="fetchWebsites" class="text-red-700 underline ml-2">Try again</button>
+      <button @click="fetchForms" class="text-red-700 underline ml-2">Try again</button>
     </div>
 
     <EmptyState
-      v-else-if="websites.length === 0"
-      icon="website"
-      message="You don't have any websites yet. Add your first website to get started."
-      actionLabel="Add Website"
-      :actionClick="() => (showAddWebsiteModal = true)"
+      v-else-if="forms.length === 0"
+      icon="form"
+      message="You don't have any forms yet. Add your first form to get started."
+      actionLabel="Add Form"
+      :actionClick="() => (showAddFormModal = true)"
     />
 
     <div v-else class="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       <NuxtLink
-        v-for="website in websites"
-        :key="website.id"
-        :to="`/websites/${website.id}`"
+        v-for="form in forms"
+        :key="form.id"
+        :to="`/forms/${form.id}`"
         class="card hover:shadow-lg transition-shadow duration-200"
       >
-        <h2 class="text-base md:text-lg font-semibold text-bermuda-700 mb-2">{{ website.name }}</h2>
+        <h2 class="text-base md:text-lg font-semibold text-bermuda-700 mb-2">{{ form.name }}</h2>
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <div class="text-xs md:text-sm text-bermuda-600">{{ formatDate(website.createdAt) }}</div>
+          <div class="text-xs md:text-sm text-bermuda-600">{{ formatDate(form.createdAt) }}</div>
           <div class="text-xs md:text-sm text-bermuda-500 flex items-center">
             <svg class="w-3 h-3 md:w-4 md:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -53,12 +53,12 @@
       </NuxtLink>
     </div>
 
-    <!-- Add Website Modal -->
+    <!-- Add Form Modal -->
     <Teleport to="body">
-      <div v-if="showAddWebsiteModal" class="modal-backdrop">
+      <div v-if="showAddFormModal" class="modal-backdrop">
         <div class="modal-content max-w-md w-full">
           <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold text-bermuda-800">Add New Website</h2>
+            <h2 class="text-xl font-bold text-bermuda-800">Add New Form</h2>
             <button @click="closeModal" class="text-bermuda-400 hover:text-bermuda-600" :disabled="formLoading">
               <span class="sr-only">Close</span>
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,24 +67,11 @@
             </button>
           </div>
 
-          <form @submit.prevent="addWebsite" class="space-y-4">
+          <form @submit.prevent="addForm" class="space-y-4">
             <div>
-              <label for="name" class="block text-sm font-medium text-bermuda-700">Website Name</label>
-              <input id="name" v-model="newWebsite.name" type="text" required class="form-input" />
+              <label for="name" class="block text-sm font-medium text-bermuda-700">Form Name</label>
+              <input id="name" v-model="newForm.name" type="text" required class="form-input" />
               <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
-            </div>
-
-            <div>
-              <label for="domain" class="block text-sm font-medium text-bermuda-700">Domain</label>
-              <input
-                id="domain"
-                v-model="newWebsite.domain"
-                type="url"
-                required
-                placeholder="https://example.com"
-                class="form-input"
-              />
-              <p v-if="errors.domain" class="mt-1 text-sm text-red-600">{{ errors.domain }}</p>
             </div>
 
             <div v-if="formError" class="bg-red-50 p-3 rounded text-red-600 text-sm">
@@ -95,7 +82,7 @@
               <button type="button" @click="closeModal" class="btn-secondary" :disabled="formLoading">Cancel</button>
               <button type="submit" class="btn-primary" :disabled="formLoading">
                 <span v-if="formLoading">Adding...</span>
-                <span v-else>Add Website</span>
+                <span v-else>Add Form</span>
               </button>
             </div>
           </form>
@@ -106,19 +93,14 @@
 </template>
 
 <script setup lang="ts">
-import { createWebsiteSchema } from '~~/shared/schemas/website';
+import { createFormSchema } from '~~/shared/schemas/form';
 
-const { websites, isLoading, error, fetchWebsites, createWebsite } = useWebsites();
+const { forms, isLoading, error, fetchForms, createForm } = useForms();
+fetchForms();
 
-// Fetch websites when the component is mounted
-onMounted(async () => {
-  await fetchWebsites();
-});
-
-const showAddWebsiteModal = ref(false);
-const newWebsite = reactive({
+const showAddFormModal = ref(false);
+const newForm = reactive({
   name: '',
-  domain: '',
 });
 const errors = ref<Record<string, string>>({});
 const formError = ref('');
@@ -134,21 +116,21 @@ const formatDate = (dateString: string) => {
   }).format(date);
 };
 
-async function addWebsite() {
+async function addForm() {
   errors.value = {};
   formError.value = '';
   formLoading.value = true;
 
   try {
     // Validate form data
-    createWebsiteSchema.parse(newWebsite);
+    createFormSchema.parse(newForm);
 
     // Submit to API
-    await createWebsite(newWebsite);
+    await createForm(newForm);
 
     // Reset form and close modal
     resetForm();
-    showAddWebsiteModal.value = false;
+    showAddFormModal.value = false;
   } catch (error: any) {
     // Handle validation errors
     if (error.errors) {
@@ -158,7 +140,7 @@ async function addWebsite() {
         }
       });
     } else {
-      formError.value = error.message || 'Failed to create website. Please try again.';
+      formError.value = error.message || 'Failed to create form. Please try again.';
     }
   } finally {
     formLoading.value = false;
@@ -166,13 +148,12 @@ async function addWebsite() {
 }
 
 function closeModal() {
-  showAddWebsiteModal.value = false;
+  showAddFormModal.value = false;
   resetForm();
 }
 
 function resetForm() {
-  newWebsite.name = '';
-  newWebsite.domain = '';
+  newForm.name = '';
   errors.value = {};
   formError.value = '';
 }

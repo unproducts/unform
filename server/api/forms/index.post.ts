@@ -3,7 +3,6 @@ import { createFormSchema, Form } from '~~/shared/schemas/form';
 import { formsTable } from '~~/server/db/schema';
 
 export default defineEventHandler(async (event) => {
-  const { websiteId } = getRouterParams(event);
   const { user } = await authenticateRequest(event);
   const body = await readValidatedBody(event, createFormSchema.parse);
   const db = await useDatabase();
@@ -12,7 +11,6 @@ export default defineEventHandler(async (event) => {
     .values({
       ...body,
       adminId: user.id,
-      websiteId,
     })
     .returning();
 

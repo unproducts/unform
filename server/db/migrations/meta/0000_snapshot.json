@@ -1,5 +1,5 @@
 {
-  "id": "dbd799e8-0d02-4056-845b-b2592c2b3693",
+  "id": "2210c542-20c2-4259-a1c1-f7a1f55065cc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -70,6 +70,77 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.form_domains": {
+      "name": "form_domains",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "form_id": {
+          "name": "form_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "domain": {
+          "name": "domain",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "form_domains_admin_id_admins_id_fk": {
+          "name": "form_domains_admin_id_admins_id_fk",
+          "tableFrom": "form_domains",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "form_domains_form_id_forms_id_fk": {
+          "name": "form_domains_form_id_forms_id_fk",
+          "tableFrom": "form_domains",
+          "tableTo": "forms",
+          "columnsFrom": [
+            "form_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.form_responses": {
       "name": "form_responses",
       "schema": "",
@@ -78,6 +149,12 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
+          "notNull": true
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "uuid",
+          "primaryKey": false,
           "notNull": true
         },
         "form_id": {
@@ -92,15 +169,14 @@
           "primaryKey": false,
           "notNull": true
         },
+        "collected_data": {
+          "name": "collected_data",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -109,6 +185,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "form_responses_admin_id_admins_id_fk": {
+          "name": "form_responses_admin_id_admins_id_fk",
+          "tableFrom": "form_responses",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "form_responses_form_id_forms_id_fk": {
           "name": "form_responses_form_id_forms_id_fk",
           "tableFrom": "form_responses",
@@ -119,7 +208,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -145,8 +234,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "website_id": {
-          "name": "website_id",
+        "admin_id": {
+          "name": "admin_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -168,12 +257,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "forms_website_id_websites_id_fk": {
-          "name": "forms_website_id_websites_id_fk",
+        "forms_admin_id_admins_id_fk": {
+          "name": "forms_admin_id_admins_id_fk",
           "tableFrom": "forms",
-          "tableTo": "websites",
+          "tableTo": "admins",
           "columnsFrom": [
-            "website_id"
+            "admin_id"
           ],
           "columnsTo": [
             "id"
@@ -182,51 +271,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.websites": {
-      "name": "websites",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "domain": {
-          "name": "domain",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

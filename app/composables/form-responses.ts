@@ -1,10 +1,9 @@
-import { ref } from 'vue';
-import { type FormResponse, type FormResponses } from '~~/shared/schemas/form-response';
+import { type FormResponse } from '~~/shared/schemas/form';
 
 /**
  * Composable for managing form responses
  */
-export function useFormResponses(websiteId: string, formId: string) {
+export function useFormResponses(formId: string) {
   const responses = useState<FormResponse[]>(`form-responses-${formId}`, () => []);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
@@ -15,7 +14,7 @@ export function useFormResponses(websiteId: string, formId: string) {
     error.value = null;
 
     try {
-      const data = await $fetch<FormResponse[]>(`/api/websites/${websiteId}/forms/${formId}/responses`);
+      const data = await $fetch<FormResponse[]>(`/api/forms/${formId}/responses`);
       responses.value = data;
       return data;
     } catch (err: any) {
@@ -33,7 +32,7 @@ export function useFormResponses(websiteId: string, formId: string) {
     error.value = null;
 
     try {
-      await $fetch(`/api/websites/${websiteId}/forms/${formId}/responses/${responseId}`, {
+      await $fetch(`/api/forms/${formId}/responses/${responseId}`, {
         method: 'DELETE',
       });
 

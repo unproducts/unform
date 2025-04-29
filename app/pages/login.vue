@@ -23,7 +23,7 @@ async function handleLogin() {
     isLoading.value = true;
     try {
       await login(formData);
-      router.push('/websites');
+      router.push('/forms');
     } catch (error: any) {
       if (error.response) {
         loginError.value = error.response._data?.message || 'Login failed. Please try again.';

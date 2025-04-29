@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, pgTable, timestamp, uuid, varchar, char, json } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, timestamp, uuid, varchar, char, json, text } from 'drizzle-orm/pg-core';
 
 const defaultUuidPkField = () =>
   uuid('id')
@@ -16,26 +16,26 @@ export const adminsTable = pgTable('admins', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const websitesTable = pgTable('websites', {
-  id: defaultUuidPkField(),
-  domain: varchar('domain', { length: 255 }).notNull(),
-  name: varchar('name', { length: 255 }).notNull(),
-  adminId: uuid('admin_id').references(() => adminsTable.id, { onDelete: 'set null' }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
-
 export const formsTable = pgTable('forms', {
   id: defaultUuidPkField(),
   name: varchar('name', { length: 255 }).notNull(),
   adminId: uuid('admin_id')
     .notNull()
     .references(() => adminsTable.id),
-  websiteId: uuid('website_id')
-    .notNull()
-    .references(() => websitesTable.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const formDomainsTable = pgTable('form_domains', {
+  id: defaultUuidPkField(),
+  adminId: uuid('admin_id')
+    .notNull()
+    .references(() => adminsTable.id),
+  formId: uuid('form_id')
+    .notNull()
+    .references(() => formsTable.id, { onDelete: 'cascade' }),
+  domain: varchar('domain', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const formResponsesTable = pgTable('form_responses', {
@@ -43,12 +43,10 @@ export const formResponsesTable = pgTable('form_responses', {
   adminId: uuid('admin_id')
     .notNull()
     .references(() => adminsTable.id),
-  websiteId: uuid('website_id')
-    .notNull()
-    .references(() => websitesTable.id),
   formId: uuid('form_id')
     .notNull()
     .references(() => formsTable.id, { onDelete: 'cascade' }),
   data: json('data').notNull(),
+  collectedData: json('collected_data').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

@@ -4,13 +4,12 @@ import authenticateRequest from '~~/server/utils/auth';
 import { Form } from '~~/shared/schemas/form';
 
 export default defineEventHandler(async (event) => {
-  await authenticateRequest(event);
+  const { user } = await authenticateRequest(event);
 
-  const { websiteId } = getRouterParams(event);
   const db = await useDatabase();
-  const forms = await db.select().from(formsTable).where(eq(formsTable.websiteId, websiteId));
+  const forms = await db.select().from(formsTable).where(eq(formsTable.adminId, user.id));
   return forms.map((form) => {
-    const { adminId, websiteId, ...rest } = form;
+    const { adminId, ...rest } = form;
     return rest as unknown as Form;
   });
 });

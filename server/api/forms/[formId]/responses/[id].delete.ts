@@ -6,18 +6,13 @@ export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event);
   const { user } = await authenticateRequest(event);
   const db = await useDatabase();
-  const { websiteId, formId } = getRouterParams(event);
+  const { formId } = getRouterParams(event);
 
-  const response = await db
+  await db
     .delete(formResponsesTable)
     .where(
-      and(
-        eq(formResponsesTable.id, id),
-        eq(formResponsesTable.adminId, user.id),
-        eq(formResponsesTable.websiteId, websiteId),
-        eq(formResponsesTable.formId, formId)
-      )
+      and(eq(formResponsesTable.id, id), eq(formResponsesTable.adminId, user.id), eq(formResponsesTable.formId, formId))
     );
 
-  return response;
+  return sendNoContent(event);
 });

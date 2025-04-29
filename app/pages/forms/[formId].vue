@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="mb-6">
-      <NuxtLink :to="`/websites/${websiteId}`" class="text-bermuda-600 hover:text-bermuda-800 flex items-center">
+      <NuxtLink :to="`/forms`" class="text-bermuda-600 hover:text-bermuda-800 flex items-center">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to {{ website.name || 'Website' }}
+        Back to Forms
       </NuxtLink>
     </div>
 
@@ -312,23 +312,19 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useWebsites } from '~/composables/websites';
 import { useForms } from '~/composables/forms';
 import { useFormResponses } from '~/composables/form-responses';
 import { updateFormSchema, type Form } from '~~/shared/schemas/form';
-import type { Website } from '~~/shared/schemas/website';
 
 const route = useRoute();
 const router = useRouter();
-const websiteId = route.params.id as string;
 const formId = route.params.formId as string;
 
 const config = useRuntimeConfig();
 const host = config.public.host;
 
 // Use composables
-const { getWebsite } = useWebsites();
-const { getForm, updateForm, deleteForm } = useForms(websiteId);
+const { getForm, updateForm, deleteForm } = useForms();
 const {
   responses,
   isLoading: responsesLoading,
@@ -336,10 +332,9 @@ const {
   fetchResponses,
   deleteResponse: apiDeleteResponse,
   exportResponsesAsCSV,
-} = useFormResponses(websiteId, formId);
+} = useFormResponses(formId);
 
 // State management
-const website = ref<Website>({} as Website);
 const form = ref<Form>({} as Form);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
@@ -368,32 +363,23 @@ const formEndpoint = computed(() => {
 });
 
 // Load data on mount
-onMounted(async () => {
-  isLoading.value = true;
-  error.value = null;
+isLoading.value = true;
+error.value = null;
 
-  try {
-    const [websiteData, formData] = await Promise.all([getWebsite(websiteId), getForm(formId)]);
-
-    if (websiteData) {
-      website.value = websiteData;
-    }
-
-    if (formData) {
-      form.value = formData;
-      // Initialize edit form with current data
-      editFormData.name = formData.name;
-    }
-
-    // Load responses after form data
-    await fetchResponses();
-  } catch (err: any) {
-    error.value = err.message || 'Failed to load data';
-    console.error('Error loading data:', err);
-  } finally {
-    isLoading.value = false;
+try {
+  const formData = await getForm(formId);
+  if (formData) {
+    form.value = formData;
+    editFormData.name = formData.name;
   }
-});
+
+  await fetchResponses();
+} catch (err: any) {
+  error.value = err.message || 'Failed to load data';
+  console.error('Error loading data:', err);
+} finally {
+  isLoading.value = false;
+}
 
 // Extract unique fields from all responses
 const formFields = computed(() => {
@@ -456,7 +442,7 @@ async function handleDeleteForm() {
   deleteLoading.value = true;
   try {
     await deleteForm(formId);
-    router.push(`/websites/${websiteId}`);
+    router.push(`/forms`);
   } catch (error: any) {
     // Show error in the edit modal
     editError.value = error.message || 'Failed to delete form. Please try again.';

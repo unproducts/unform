@@ -7,7 +7,7 @@ const { logout } = useLogout();
     <div class="container mx-auto px-4">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center">
-          <NuxtLink to="/websites" class="text-2xl font-bold text-bermuda-600 flex items-center gap-2">
+          <NuxtLink to="/forms" class="text-2xl font-bold text-bermuda-600 flex items-center gap-2">
             <img src="~/assets/icon.svg" alt="Unform Logo" class="w-10 h-10" />
             Unform
           </NuxtLink>

@@ -1,6 +1,6 @@
 import { H3Event } from 'h3';
 import { eq } from 'drizzle-orm';
-import { formsTable, formResponsesTable, websitesTable } from '~~/server/db/schema';
+import { formsTable, formResponsesTable, formDomainsTable } from '~~/server/db/schema';
 import { useDatabase } from '~~/server/utils/db';
 import { z } from 'zod';
 const sendFormResponseRedirect = (event: H3Event, returnURL: string, success: boolean, errorCode?: string) => {
@@ -89,15 +89,7 @@ export default defineEventHandler(async (event) => {
 
   const db = await useDatabase();
 
-  const formDbResponse = await db
-    .select({
-      form: formsTable,
-      website: websitesTable,
-    })
-    .from(formsTable)
-    .leftJoin(websitesTable, eq(formsTable.websiteId, websitesTable.id))
-    .where(eq(formsTable.id, formId))
-    .limit(1);
+  const formDbResponse = await db.select().from(formsTable).where(eq(formsTable.id, formId)).limit(1);
 
   if (!formDbResponse || formDbResponse.length === 0) {
     if (isApiCall) {
@@ -109,23 +101,28 @@ export default defineEventHandler(async (event) => {
       return sendFormResponseRedirect(event, returnURL!, false, errorCodes.formNotFound);
     }
   }
+  const form = formDbResponse[0]!;
 
-  const { form, website } = formDbResponse[0];
-  if (!website) {
+  const formDomainsDbResponse = await db.select().from(formDomainsTable).where(eq(formDomainsTable.formId, formId));
+
+  const formDomains = formDomainsDbResponse.map((domain) => domain.domain);
+
+  if (!formDomains.length) {
     if (isApiCall) {
       throw createError({
         statusCode: 404,
-        message: 'Website not found',
+        message: 'Form not found',
       });
     } else {
-      return sendFormResponseRedirect(event, returnURL!, false, errorCodes.websiteNotFound);
+      return sendFormResponseRedirect(event, returnURL!, false, errorCodes.formNotFound);
     }
   }
 
+  const collectedDataObject: Record<string, string> = {};
+
   if (!isApiCall) {
     // verify the origin of the request if form submission
-    const websiteDomain = website.domain;
-    let originDomain = '';
+    let originDomain: string | null = null;
     try {
       const originUrl = new URL(origin!);
       originDomain = originUrl.hostname;
@@ -134,16 +131,20 @@ export default defineEventHandler(async (event) => {
       return sendFormResponseRedirect(event, returnURL!, false, errorCodes.invalidOrigin);
     }
 
-    if (originDomain && !originDomain.includes(websiteDomain) && !websiteDomain.includes(originDomain)) {
+    const websiteDomain = formDomains.find(
+      (domain) => originDomain!.includes(domain) || domain.includes(originDomain!)
+    );
+    if (!websiteDomain) {
       return sendFormResponseRedirect(event, returnURL!, false, errorCodes.forbidden);
     }
+    collectedDataObject.websiteDomain = websiteDomain;
   }
 
   await db.insert(formResponsesTable).values({
     formId,
     adminId: form.adminId,
-    websiteId: form.websiteId,
     data: formDataObject,
+    collectedData: collectedDataObject,
   });
 
   if (isApiCall) {

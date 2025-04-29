@@ -26,7 +26,7 @@ async function handleRegister() {
 
     try {
       await register(formData);
-      router.push('/websites');
+      router.push('/forms');
     } catch (error: any) {
       if (error.response) {
         registerError.value = error.response._data?.message || 'Registration failed. Please try again.';

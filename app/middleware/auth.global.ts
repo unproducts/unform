@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const { loggedIn } = useUserSession();
   if (unAuthenticatedRoutes.includes(to.path)) {
     if (loggedIn.value) {
-      return navigateTo('/websites');
+      return navigateTo('/forms');
     }
   } else {
     if (!loggedIn.value) {

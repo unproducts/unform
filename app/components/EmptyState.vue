@@ -16,21 +16,6 @@
     </svg>
 
     <svg
-      v-else-if="icon === 'website'"
-      class="h-16 w-16 md:h-20 md:w-20 text-bermuda-300 mx-auto mb-3 md:mb-4"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="1.5"
-        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-      />
-    </svg>
-
-    <svg
       v-else-if="icon === 'response'"
       class="h-16 w-16 md:h-20 md:w-20 text-bermuda-300 mx-auto mb-3 md:mb-4"
       fill="none"
@@ -61,7 +46,7 @@ defineProps({
   icon: {
     type: String,
     default: 'form',
-    validator: (value: string) => ['form', 'website', 'response'].includes(value),
+    validator: (value: string) => ['form', 'response'].includes(value),
   },
   message: {
     type: String,

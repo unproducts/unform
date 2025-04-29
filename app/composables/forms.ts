@@ -3,18 +3,18 @@ import { createFormSchema, updateFormSchema, type Form } from '~~/shared/schemas
 /**
  * Composable for managing forms data and operations
  */
-export function useForms(websiteId: string) {
-  const forms = useState<Form[]>(`forms-${websiteId}`, () => []);
+export function useForms() {
+  const forms = useState<Form[]>(`forms`, () => []);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  // Fetch all forms for a specific website
+  // Fetch all forms
   const fetchForms = async () => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      const data = await $fetch<Form[]>(`/api/websites/${websiteId}/forms`);
+      const data = await $fetch<Form[]>(`/api/forms`);
       forms.value = data;
       return data;
     } catch (err: any) {
@@ -32,7 +32,7 @@ export function useForms(websiteId: string) {
     error.value = null;
 
     try {
-      const data = await $fetch<Form>(`/api/websites/${websiteId}/forms/${formId}`);
+      const data = await $fetch<Form>(`/api/forms/${formId}`);
       return data;
     } catch (err: any) {
       error.value = err.message || `Failed to fetch form with ID ${formId}`;
@@ -52,7 +52,7 @@ export function useForms(websiteId: string) {
       // Validate data with Zod schema
       createFormSchema.parse(formData);
 
-      const data = await $fetch<Form>(`/api/websites/${websiteId}/forms`, {
+      const data = await $fetch<Form>(`/api/forms`, {
         method: 'POST',
         body: formData,
       });
@@ -83,7 +83,7 @@ export function useForms(websiteId: string) {
       // Validate data with Zod schema
       updateFormSchema.parse(formData);
 
-      const data = await $fetch<Form>(`/api/websites/${websiteId}/forms/${formId}`, {
+      const data = await $fetch<Form>(`/api/forms/${formId}`, {
         method: 'PUT',
         body: formData,
       });
@@ -112,7 +112,7 @@ export function useForms(websiteId: string) {
     error.value = null;
 
     try {
-      await $fetch(`/api/websites/${websiteId}/forms/${formId}`, {
+      await $fetch(`/api/forms/${formId}`, {
         method: 'DELETE',
       });
 
