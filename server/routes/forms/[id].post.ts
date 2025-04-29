@@ -2,7 +2,7 @@ import { H3Event } from 'h3';
 import { eq } from 'drizzle-orm';
 import { formsTable, formResponsesTable, websitesTable } from '~~/server/db/schema';
 import { useDatabase } from '~~/server/utils/db';
-
+import { z } from 'zod';
 const sendFormResponseRedirect = (event: H3Event, returnURL: string, success: boolean, errorCode?: string) => {
   const returnURLObject = new URL(returnURL);
   returnURLObject.searchParams.set('success', success.toString());
@@ -72,6 +72,18 @@ export default defineEventHandler(async (event) => {
     formDataObject = {};
     for (const [key, value] of formData.entries()) {
       formDataObject[key] = value.toString();
+    }
+  }
+
+  const isFormIdValid = z.string().uuid().safeParse(formId);
+  if (!isFormIdValid.success) {
+    if (isApiCall) {
+      throw createError({
+        statusCode: 404,
+        message: 'Form not found',
+      });
+    } else {
+      return sendFormResponseRedirect(event, returnURL!, false, errorCodes.formNotFound);
     }
   }
 
