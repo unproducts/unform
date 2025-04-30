@@ -1,0 +1,56 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Disclaimer:
+This project used Nuxt3 for backend and frontend. TailwindCSS for styling.
+Various modules are configured inside `nuxt.config.ts` to reuse functinalities.
+This means that all Nuxt3 best practices can be used and referred. Your Nuxt3 knowledge is valid.
+
+- Use Nuxt auto imports to import components, composables and utils.
+- Prefer `<Icon/>` component for SVGs. In case SVGs needed, make them inside `/app/assets/images` and import them.
+- Locate main.css in `app/assets/css/main.css` and only re-use styles from there. Tailwind configured and available at `tailwind.config.ts` at root of the project.
+- Do not include redundant / explanatory comments, with an exception for important comments.
+- Reuse schemas wherever possible.
+- All components should follow Vue3 composition API and typescript ONLY i.e. their script start with `<script setup lang='ts'>`.
+
+Directory Structure
+(Important paths explained. Project is not limited to these paths. You will still need to explore paths by navigating):
+- `/app`: Frontend Nuxt / Vue.js Code.
+  - `/app/components`: Vue3 components. Auto-imported.
+  - `/app/composables`: Vue3 composables. Auto-imported.
+  - `/app/pages`: Vue3 components rendered as pages and mapped via file based routing.
+- `/shared`: Shared code between backend and frontend.
+  - `/shared/schemas`: ZOD validation schemas for validation.
+  - `/shared/consts`: Constants that should be reused wherever possible.
+- `/server`: Backend code written in Nitro/H3 built by UnJS, configured by Nuxt.
+  - `/server/api`: File based routing followed to indentify paths. They follow REST protocol and access `/shared` dir for validation.
+
+Coding Hints for Frontend:
+- Use Vue.js 3 / Nuxt 3 best practices.
+- Type ref() values explicitly when TypeScript can't infer correctly: ref<string>('')
+- Type event handlers with appropriate event types (MouseEvent, KeyboardEvent, etc.)
+- Use PropType for complex prop types in runtime declarations
+- Return explicitly typed objects from composables
+- Use generics for reusable composables that work with different data types
+- Always use TypeScript interfaces or type aliases with defineProps and defineEmits
+- Define complex types in separate files within the /types directory
+- Use the withDefaults helper for props with default values
+- Mark optional props with the ? symbol
+- Required props should not have the ? symbol
+- Create small, focused components for specific tasks
+- Use defineModel for two-way binding between parent and child components
+- Use props for passing data down to child components
+- Use emits for communicating events up to parent components
+- Use composables for shared state and logic across components
+- Use Pinia for global state management
+- Consider provide/inject only for specific cases like theme providers or deeply nested component trees
+
+Naming Conventions:
+- Use PascalCase for interface, type, and enum names
+- Use singular nouns for entity types (e.g., \`Post\` not \`Posts\`)
+- Suffix interfaces representing props with \`Props\` (e.g., \`ButtonProps\`)
+- Suffix interfaces representing state with \`State\` (e.g., \`AuthState\`)
+
+
