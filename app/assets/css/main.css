@@ -39,15 +39,15 @@
 
 /* Mobile-friendly buttons */
 .btn-primary {
-  @apply px-3 py-2 md:px-4 md:py-2 bg-bermuda-500 text-white rounded-md hover:bg-bermuda-600 transition-colors duration-200 text-sm md:text-base;
+  @apply px-3 py-2 md:px-4 md:py-2 bg-bermuda-500 text-white rounded-md hover:bg-bermuda-600 transition-colors duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .btn-secondary {
-  @apply px-3 py-2 md:px-4 md:py-2 border border-bermuda-200 rounded-md text-bermuda-700 bg-white hover:bg-bermuda-50 text-sm md:text-base;
+  @apply px-3 py-2 md:px-4 md:py-2 border border-bermuda-200 rounded-md text-bermuda-700 bg-white hover:bg-bermuda-50 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .btn-danger {
-  @apply px-3 py-2 md:px-4 md:py-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm md:text-base;
+  @apply px-3 py-2 md:px-4 md:py-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 /* Mobile-friendly cards */
@@ -61,7 +61,7 @@
 }
 
 .modal-content {
-  @apply bg-white rounded-lg shadow-xl p-4 md:p-6 w-full max-w-md mx-auto;
+  @apply bg-white rounded-lg shadow-xl p-4 md:p-6 w-full mx-auto;
 }
 
 /* Mobile-friendly tables */
