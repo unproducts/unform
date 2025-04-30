@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, pgTable, timestamp, uuid, varchar, char, json, text } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, timestamp, uuid, varchar, char, json, text, smallint } from 'drizzle-orm/pg-core';
 
 const defaultUuidPkField = () =>
   uuid('id')
@@ -48,5 +48,16 @@ export const formResponsesTable = pgTable('form_responses', {
     .references(() => formsTable.id, { onDelete: 'cascade' }),
   data: json('data').notNull(),
   collectedData: json('collected_data').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const integrationsTable = pgTable('integrations', {
+  id: defaultUuidPkField(),
+  adminId: uuid('admin_id')
+    .notNull()
+    .references(() => adminsTable.id),
+  type: smallint('type').notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  data: json('data').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
