@@ -23,6 +23,7 @@
 
       <FormPreferencesDetails :form="form" v-if="form" @form-updated="setFormData" />
       <FormPreferencesDomains :form="form" v-if="form" />
+      <FormPreferencesIntegrations :form="form" v-if="form" />
       <FormPreferencesDanger :form="form" v-if="form" />
     </div>
   </div>

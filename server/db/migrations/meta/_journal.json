@@ -15,6 +15,13 @@
       "when": 1745990940463,
       "tag": "0001_lean_rhodey",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747052734271,
+      "tag": "0002_chunky_leech",
+      "breakpoints": true
     }
   ]
 }

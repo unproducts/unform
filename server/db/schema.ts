@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, pgTable, timestamp, uuid, varchar, char, json, text, smallint } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, timestamp, uuid, varchar, char, json, text, smallint, unique } from 'drizzle-orm/pg-core';
 
 const defaultUuidPkField = () =>
   uuid('id')
@@ -28,9 +28,6 @@ export const formsTable = pgTable('forms', {
 
 export const formDomainsTable = pgTable('form_domains', {
   id: defaultUuidPkField(),
-  adminId: uuid('admin_id')
-    .notNull()
-    .references(() => adminsTable.id),
   formId: uuid('form_id')
     .notNull()
     .references(() => formsTable.id, { onDelete: 'cascade' }),
@@ -40,9 +37,6 @@ export const formDomainsTable = pgTable('form_domains', {
 
 export const formResponsesTable = pgTable('form_responses', {
   id: defaultUuidPkField(),
-  adminId: uuid('admin_id')
-    .notNull()
-    .references(() => adminsTable.id),
   formId: uuid('form_id')
     .notNull()
     .references(() => formsTable.id, { onDelete: 'cascade' }),
@@ -50,6 +44,23 @@ export const formResponsesTable = pgTable('form_responses', {
   collectedData: json('collected_data').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const formIntegrationsTable = pgTable(
+  'form_integrations',
+  {
+    id: defaultUuidPkField(),
+    formId: uuid('form_id')
+      .notNull()
+      .references(() => formsTable.id, { onDelete: 'cascade' }),
+    integrationId: uuid('integration_id')
+      .notNull()
+      .references(() => integrationsTable.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    formIntegrationUnique: unique().on(table.formId, table.integrationId),
+  })
+);
 
 export const integrationsTable = pgTable('integrations', {
   id: defaultUuidPkField(),

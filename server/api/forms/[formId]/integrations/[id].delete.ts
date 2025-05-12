@@ -1,12 +1,11 @@
 import authenticateRequest from '~~/server/utils/auth';
-import { formDomainsTable, formsTable } from '~~/server/db/schema';
+import { formIntegrationsTable, formsTable } from '~~/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
-  const { id } = getRouterParams(event);
+  const { formId, id } = getRouterParams(event);
   const { user } = await authenticateRequest(event);
   const db = await useDatabase();
-  const { formId } = getRouterParams(event);
 
   const formResponse = await db
     .select()
@@ -21,8 +20,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const form = formResponse[0];
-
-  await db.delete(formDomainsTable).where(and(eq(formDomainsTable.id, id), eq(formDomainsTable.formId, form.id)));
+  await db
+    .delete(formIntegrationsTable)
+    .where(and(eq(formIntegrationsTable.id, id), eq(formIntegrationsTable.formId, form.id)));
 
   return sendNoContent(event);
 });

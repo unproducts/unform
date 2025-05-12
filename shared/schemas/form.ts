@@ -32,3 +32,13 @@ export const formDomainsSchema = z.array(formDomainSchema);
 export type FormDomains = z.infer<typeof formDomainsSchema>;
 
 export const createFormDomainSchema = formDomainSchema.omit({ id: true, createdAt: true });
+export const updateFormDomainSchema = formDomainSchema.omit({ id: true, createdAt: true }).partial();
+
+export const formIntegrationSchema = z.object({
+  id: z.string().uuid(),
+  integrationId: z.string().uuid(),
+  createdAt: z.string().datetime(),
+});
+export type FormIntegration = z.infer<typeof formIntegrationSchema>;
+export const createFormIntegrationSchema = formIntegrationSchema.omit({ id: true, createdAt: true });
+export const updateFormIntegrationSchema = formIntegrationSchema.omit({ id: true, createdAt: true }).partial();

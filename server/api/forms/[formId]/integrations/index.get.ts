@@ -1,13 +1,12 @@
 import authenticateRequest from '~~/server/utils/auth';
-import { formDomainsTable, formsTable } from '~~/server/db/schema';
+import { formIntegrationsTable, formsTable } from '~~/server/db/schema';
 import { and, eq } from 'drizzle-orm';
+import { FormIntegration } from '~~/shared/schemas/form';
 
 export default defineEventHandler(async (event) => {
-  const { id } = getRouterParams(event);
+  const { formId } = getRouterParams(event);
   const { user } = await authenticateRequest(event);
   const db = await useDatabase();
-  const { formId } = getRouterParams(event);
-
   const formResponse = await db
     .select()
     .from(formsTable)
@@ -22,7 +21,10 @@ export default defineEventHandler(async (event) => {
 
   const form = formResponse[0];
 
-  await db.delete(formDomainsTable).where(and(eq(formDomainsTable.id, id), eq(formDomainsTable.formId, form.id)));
+  const integrations = await db.select().from(formIntegrationsTable).where(eq(formIntegrationsTable.formId, form.id));
 
-  return sendNoContent(event);
+  return integrations.map((integration) => {
+    const { formId, ...rest } = integration;
+    return rest as unknown as FormIntegration;
+  });
 });

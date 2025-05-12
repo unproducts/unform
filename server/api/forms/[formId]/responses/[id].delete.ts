@@ -1,5 +1,5 @@
 import authenticateRequest from '~~/server/utils/auth';
-import { formResponsesTable } from '~~/server/db/schema';
+import { formResponsesTable, formsTable } from '~~/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
@@ -8,11 +8,21 @@ export default defineEventHandler(async (event) => {
   const db = await useDatabase();
   const { formId } = getRouterParams(event);
 
-  await db
-    .delete(formResponsesTable)
-    .where(
-      and(eq(formResponsesTable.id, id), eq(formResponsesTable.adminId, user.id), eq(formResponsesTable.formId, formId))
-    );
+  const formResponse = await db
+    .select()
+    .from(formsTable)
+    .where(and(eq(formsTable.id, formId), eq(formsTable.adminId, user.id)));
+
+  if (!formResponse || formResponse.length !== 1) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Form response not found',
+    });
+  }
+
+  const form = formResponse[0];
+
+  await db.delete(formResponsesTable).where(and(eq(formResponsesTable.id, id), eq(formResponsesTable.formId, form.id)));
 
   return sendNoContent(event);
 });
