@@ -7,10 +7,10 @@
           <button
             @click="$emit('update:modelValue', false)"
             :class="['hover:text-bermuda-600', closeButtonClass]"
-            :disabled="disabled"
+            :disabled="disableClose"
           >
             <span class="sr-only">Close</span>
-            <Icon name="x" class="h-6 w-6" />
+            <Icon name="material-symbols:close" class="h-6 w-6" />
           </button>
         </div>
         <slot></slot>
@@ -41,7 +41,7 @@ defineProps({
     type: String,
     default: 'max-w-md w-full',
   },
-  disabled: {
+  disableClose: {
     type: Boolean,
     default: false,
   },

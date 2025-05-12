@@ -1,0 +1,128 @@
+<script setup lang="ts">
+import type { Integration } from '~~/shared/schemas/integration';
+import { getIntegrationType } from '~~/shared/consts/integrations';
+import { FormValidationSchemas } from '~~/shared/consts/integrations';
+
+const { integrations, isLoading, fetchIntegrations } = useIntegrations();
+
+fetchIntegrations();
+
+const createNewIntegration = () => {
+  showForm.value = true;
+};
+
+const showForm = ref(false);
+
+const activeIntegration = ref<Integration | null>(null);
+
+// Add validation function
+const validateIntegration = (integration: Integration) => {
+  const schema = FormValidationSchemas[getIntegrationType(integration.type)?.id as keyof typeof FormValidationSchemas];
+  if (!schema) return true; // If no schema found, assume valid
+  try {
+    schema.parse(integration.data);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+</script>
+
+<template>
+  <div>
+    <div class="mb-6">
+      <NuxtLink to="/forms" class="text-bermuda-600 hover:text-bermuda-800 flex items-center">
+        <Icon name="si:arrow-left-line" class="w-6 h-6 mr-1" />
+        Back to Forms
+      </NuxtLink>
+    </div>
+
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl font-bold text-bermuda-800">Integrations</h1>
+      <button @click="createNewIntegration" class="btn-primary">
+        <Icon name="material-symbols:add" class="mr-1" />
+        New Integration
+      </button>
+    </div>
+
+    <!-- Loading state -->
+    <div v-if="isLoading" class="flex justify-center py-8">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Empty state -->
+    <EmptyState
+      v-else-if="!integrations?.length"
+      message="No Integrations Found"
+      icon="material-symbols:integration-instructions"
+      actionLabel="Create Integration"
+      :actionClick="createNewIntegration"
+    />
+
+    <!-- Integration list -->
+    <div v-else class="space-y-4">
+      <div class="w-full" v-for="integration in integrations" :key="integration.id">
+        <button
+          class="flex items-center justify-between p-4 cursor-pointer w-full bg-white hover:bg-gray-50 rounded-md border border-gray-200"
+          @click="
+            () => {
+              if (activeIntegration?.id === integration.id) {
+                activeIntegration = null;
+              } else {
+                activeIntegration = integration;
+              }
+            }
+          "
+        >
+          <div class="flex items-center">
+            <div class="w-10 h-10 flex items-center justify-center rounded-full bg-bermuda-100 mr-3">
+              <Icon
+                :name="getIntegrationType(integration.type)?.icon || 'material-symbols:integration-instructions'"
+                size="20"
+                class="text-bermuda-500"
+              />
+            </div>
+            <div class="text-left">
+              <div class="flex items-center gap-2">
+                <h3 class="text-lg font-medium">{{ integration.name }}</h3>
+                <Icon
+                  v-if="!validateIntegration(integration)"
+                  name="material-symbols:warning"
+                  size="20"
+                  class="text-yellow-500"
+                  title="Integration configuration is invalid"
+                />
+              </div>
+              <p class="text-sm text-gray-600">{{ getIntegrationType(integration.type)?.description }}</p>
+            </div>
+          </div>
+          <Icon
+            name="heroicons:chevron-right"
+            size="20"
+            class="text-gray-400 transition-transform duration-200"
+            :class="{ 'rotate-90': activeIntegration?.id === integration.id }"
+          />
+        </button>
+        <Transition
+          enter-active-class="transition duration-100 ease-out"
+          enter-from-class="transform -translate-y-4 opacity-0"
+          enter-to-class="transform translate-y-0 opacity-100"
+          leave-active-class="transition duration-100 ease-in"
+          leave-from-class="transform translate-y-0 opacity-100"
+          leave-to-class="transform -translate-y-4 opacity-0"
+        >
+          <div v-if="activeIntegration?.id === integration.id" class="-mt-4">
+            <IntegrationEdit
+              :integration="integration"
+              @cancel="activeIntegration = null"
+              @edited="fetchIntegrations"
+            />
+          </div>
+        </Transition>
+      </div>
+    </div>
+
+    <!-- Integration form modal -->
+    <IntegrationCreateModal v-model="showForm" @submit="fetchIntegrations" />
+  </div>
+</template>

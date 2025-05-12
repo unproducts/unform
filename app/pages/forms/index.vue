@@ -2,7 +2,10 @@
   <div>
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-2xl font-bold text-bermuda-800">Your Forms</h1>
-      <button @click="showAddFormModal = true" class="btn-primary" :disabled="isLoading">Add Form</button>
+      <div class="flex gap-3">
+        <NuxtLink to="/integrations" class="btn-secondary">Integrations</NuxtLink>
+        <button @click="showAddFormModal = true" class="btn-primary" :disabled="isLoading">Add Form</button>
+      </div>
     </div>
 
     <div v-if="isLoading" class="flex justify-center py-8">
