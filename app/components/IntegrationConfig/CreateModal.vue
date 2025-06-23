@@ -25,6 +25,6 @@ const handleCancel = () => {
 
 <template>
   <Modal title="Create Integration" v-model="showModal">
-    <IntegrationForm @submit="handleSubmit" @cancel="handleCancel" :show-config-form="false" />
+    <IntegrationConfigForm @submit="handleSubmit" @cancel="handleCancel" :show-config-form="false" />
   </Modal>
 </template>

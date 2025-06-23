@@ -1,5 +1,5 @@
 import authenticateRequest from '~~/server/utils/auth';
-import { formIntegrationsTable, formsTable } from '~~/server/db/schema';
+import { formIntegrationConfigsTable, formsTable } from '~~/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
@@ -21,8 +21,8 @@ export default defineEventHandler(async (event) => {
 
   const form = formResponse[0];
   await db
-    .delete(formIntegrationsTable)
-    .where(and(eq(formIntegrationsTable.id, id), eq(formIntegrationsTable.formId, form.id)));
+    .delete(formIntegrationConfigsTable)
+    .where(and(eq(formIntegrationConfigsTable.id, id), eq(formIntegrationConfigsTable.formId, form.id)));
 
   return sendNoContent(event);
 });

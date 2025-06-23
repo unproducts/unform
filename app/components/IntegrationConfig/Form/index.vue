@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getIntegrationType, IntegrationTypeEnum, IntegrationTypes } from '~~/shared/consts/integrations';
-import type { createIntegrationSchema, Integration } from '~~/shared/schemas/integration';
+import { getIntegration, IntegrationApps, Integrations } from '~~/shared/consts/integrations';
+import type { createIntegrationConfigSchema, IntegrationConfig } from '~~/shared/schemas/integration';
 
 import Webhook from './Webhook.vue';
 import Email from './Email.vue';
@@ -10,7 +10,7 @@ import GoogleSheets from './GoogleSheets.vue';
 import Discord from './Discord.vue';
 
 const props = defineProps<{
-  integration?: Integration;
+  integrationConfig?: IntegrationConfig;
   showConfigForm?: boolean;
   configPending?: boolean;
 }>();
@@ -22,11 +22,12 @@ const emit = defineEmits<{
 
 const configPending = defineModel<boolean>('configPending', { required: false });
 
-const { createIntegration, updateIntegration, deleteIntegration, isLoading, error } = useIntegrations();
+const { createIntegrationConfig, updateIntegrationConfig, deleteIntegrationConfig, isLoading, error } =
+  useIntegrationConfigs();
 
-const isUpdating = computed(() => !!props.integration);
-const integrationFormRef = ref<Zod.infer<typeof createIntegrationSchema>>(
-  props.integration || {
+const isUpdating = computed(() => !!props.integrationConfig);
+const integrationFormRef = ref<Zod.infer<typeof createIntegrationConfigSchema>>(
+  props.integrationConfig || {
     name: '',
     type: 0,
     data: {},
@@ -34,12 +35,12 @@ const integrationFormRef = ref<Zod.infer<typeof createIntegrationSchema>>(
 );
 
 watch(
-  () => props.integration,
+  () => props.integrationConfig,
   (value) => {
     if (!value) {
       configPending.value = false;
     } else {
-      const integrationType = getIntegrationType(value.type)!;
+      const integrationType = getIntegration(value.type)!;
       console.log(integrationType, value);
       configPending.value = !integrationType.formValidationSchema.safeParse(value.data).success;
     }
@@ -48,7 +49,7 @@ watch(
 );
 
 watch(
-  () => props.integration,
+  () => props.integrationConfig,
   (value) => {
     if (!value) {
       integrationFormRef.value = {
@@ -64,31 +65,31 @@ watch(
 
 const handleSave = async () => {
   if (isUpdating.value) {
-    await updateIntegration(props.integration!.id, integrationFormRef.value);
+    await updateIntegrationConfig(props.integrationConfig!.id, integrationFormRef.value);
   } else {
-    await createIntegration(integrationFormRef.value);
+    await createIntegrationConfig(integrationFormRef.value);
   }
   emit('submit');
 };
 
 const handleDelete = async () => {
-  await deleteIntegration(props.integration!.id);
+  await deleteIntegrationConfig(props.integrationConfig!.id);
   emit('delete');
 };
 
 const integrationFormComponent = computed(() => {
   switch (integrationFormRef.value.type) {
-    case IntegrationTypeEnum.Webhook:
+    case IntegrationApps.Webhook:
       return Webhook;
-    case IntegrationTypeEnum.Email:
+    case IntegrationApps.Email:
       return Email;
-    case IntegrationTypeEnum.Telegram:
+    case IntegrationApps.Telegram:
       return Telegram;
-    case IntegrationTypeEnum.Whatsapp:
+    case IntegrationApps.Whatsapp:
       return Whatsapp;
-    case IntegrationTypeEnum.GoogleSheets:
+    case IntegrationApps.GoogleSheets:
       return GoogleSheets;
-    case IntegrationTypeEnum.Discord:
+    case IntegrationApps.Discord:
       return Discord;
     default:
       return null;
@@ -118,8 +119,8 @@ const integrationFormComponent = computed(() => {
         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
       >
         <option disabled :value="null">Select an integration type</option>
-        <option v-for="integrationType in IntegrationTypes" :key="integrationType.type" :value="integrationType.type">
-          {{ integrationType.name }}
+        <option v-for="integration in Integrations" :key="integration.type" :value="integration.type">
+          {{ integration.name }}
         </option>
       </select>
     </div>

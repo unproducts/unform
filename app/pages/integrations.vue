@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Integration } from '~~/shared/schemas/integration';
-import { getIntegrationType } from '~~/shared/consts/integrations';
+import type { IntegrationConfig } from '~~/shared/schemas/integration';
+import { getIntegration } from '~~/shared/consts/integrations';
 import { FormValidationSchemas } from '~~/shared/consts/integrations';
 
-const { integrations, isLoading, fetchIntegrations } = useIntegrations();
+const { integrationConfigs, isLoading, fetchIntegrationConfigs } = useIntegrationConfigs();
 
-fetchIntegrations();
+fetchIntegrationConfigs();
 
 const createNewIntegration = () => {
   showForm.value = true;
@@ -13,14 +13,15 @@ const createNewIntegration = () => {
 
 const showForm = ref(false);
 
-const activeIntegration = ref<Integration | null>(null);
+const activeIntegration = ref<IntegrationConfig | null>(null);
 
 // Add validation function
-const validateIntegration = (integration: Integration) => {
-  const schema = FormValidationSchemas[getIntegrationType(integration.type)?.id as keyof typeof FormValidationSchemas];
+const validateIntegration = (integrationConfig: IntegrationConfig) => {
+  const schema =
+    FormValidationSchemas[getIntegration(integrationConfig.type)?.id as keyof typeof FormValidationSchemas];
   if (!schema) return true; // If no schema found, assume valid
   try {
-    schema.parse(integration.data);
+    schema.parse(integrationConfig.data);
     return true;
   } catch (error) {
     return false;
@@ -52,7 +53,7 @@ const validateIntegration = (integration: Integration) => {
 
     <!-- Empty state -->
     <EmptyState
-      v-else-if="!integrations?.length"
+      v-else-if="!integrationConfigs?.length"
       message="No Integrations Found"
       icon="material-symbols:integration-instructions"
       actionLabel="Create Integration"
@@ -61,15 +62,15 @@ const validateIntegration = (integration: Integration) => {
 
     <!-- Integration list -->
     <div v-else class="space-y-4">
-      <div class="w-full" v-for="integration in integrations" :key="integration.id">
+      <div class="w-full" v-for="integrationConfig in integrationConfigs" :key="integrationConfig.id">
         <button
           class="flex items-center justify-between p-4 cursor-pointer w-full bg-white hover:bg-gray-50 rounded-md border border-gray-200"
           @click="
             () => {
-              if (activeIntegration?.id === integration.id) {
+              if (activeIntegration?.id === integrationConfig.id) {
                 activeIntegration = null;
               } else {
-                activeIntegration = integration;
+                activeIntegration = integrationConfig;
               }
             }
           "
@@ -77,30 +78,30 @@ const validateIntegration = (integration: Integration) => {
           <div class="flex items-center">
             <div class="w-10 h-10 flex items-center justify-center rounded-full bg-bermuda-100 mr-3">
               <Icon
-                :name="getIntegrationType(integration.type)?.icon || 'material-symbols:integration-instructions'"
+                :name="getIntegration(integrationConfig.type)?.icon || 'material-symbols:integration-instructions'"
                 size="20"
                 class="text-bermuda-500"
               />
             </div>
             <div class="text-left">
               <div class="flex items-center gap-2">
-                <h3 class="text-lg font-medium">{{ integration.name }}</h3>
+                <h3 class="text-lg font-medium">{{ integrationConfig.name }}</h3>
                 <Icon
-                  v-if="!validateIntegration(integration)"
+                  v-if="!validateIntegration(integrationConfig)"
                   name="material-symbols:warning"
                   size="20"
                   class="text-yellow-500"
                   title="Integration configuration is invalid"
                 />
               </div>
-              <p class="text-sm text-gray-600">{{ getIntegrationType(integration.type)?.description }}</p>
+              <p class="text-sm text-gray-600">{{ getIntegration(integrationConfig.type)?.description }}</p>
             </div>
           </div>
           <Icon
             name="heroicons:chevron-right"
             size="20"
             class="text-gray-400 transition-transform duration-200"
-            :class="{ 'rotate-90': activeIntegration?.id === integration.id }"
+            :class="{ 'rotate-90': activeIntegration?.id === integrationConfig.id }"
           />
         </button>
         <Transition
@@ -111,11 +112,11 @@ const validateIntegration = (integration: Integration) => {
           leave-from-class="transform translate-y-0 opacity-100"
           leave-to-class="transform -translate-y-4 opacity-0"
         >
-          <div v-if="activeIntegration?.id === integration.id" class="-mt-4">
-            <IntegrationEdit
-              :integration="integration"
+          <div v-if="activeIntegration?.id === integrationConfig.id" class="-mt-4">
+            <IntegrationConfigEdit
+              :integration-config="integrationConfig"
               @cancel="activeIntegration = null"
-              @edited="fetchIntegrations"
+              @edited="fetchIntegrationConfigs"
             />
           </div>
         </Transition>
@@ -123,6 +124,6 @@ const validateIntegration = (integration: Integration) => {
     </div>
 
     <!-- Integration form modal -->
-    <IntegrationCreateModal v-model="showForm" @submit="fetchIntegrations" />
+    <IntegrationConfigCreateModal v-model="showForm" @submit="fetchIntegrationConfigs" />
   </div>
 </template>

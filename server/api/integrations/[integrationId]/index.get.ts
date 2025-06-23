@@ -1,7 +1,7 @@
-import { integrationsTable } from '~~/server/db/schema';
+import { integrationConfigsTable } from '~~/server/db/schema';
 import authenticateRequest from '~~/server/utils/auth';
 import { and, eq } from 'drizzle-orm';
-import { Integration } from '~~/shared/schemas/integration';
+import { IntegrationConfig } from '~~/shared/schemas/integration';
 
 export default defineEventHandler(async (event) => {
   const { integrationId } = getRouterParams(event);
@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
   const db = await useDatabase();
   const integration = await db
     .select()
-    .from(integrationsTable)
-    .where(and(eq(integrationsTable.id, integrationId), eq(integrationsTable.adminId, user.id)));
+    .from(integrationConfigsTable)
+    .where(and(eq(integrationConfigsTable.id, integrationId), eq(integrationConfigsTable.adminId, user.id)));
 
   if (!integration || !integration.length) {
     throw createError({
@@ -22,5 +22,5 @@ export default defineEventHandler(async (event) => {
   // @ts-expect-error adminId deleted, but type says otherwise.
   delete integration[0]!.adminId;
 
-  return integration[0]! as unknown as Integration;
+  return integration[0]! as unknown as IntegrationConfig;
 });

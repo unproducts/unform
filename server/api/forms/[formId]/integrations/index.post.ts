@@ -1,13 +1,13 @@
 import { and, eq } from 'drizzle-orm';
-import { formIntegrationsTable, formsTable } from '~~/server/db/schema';
+import { formIntegrationConfigsTable, formsTable } from '~~/server/db/schema';
 import authenticateRequest from '~~/server/utils/auth';
-import { createFormIntegrationSchema, FormIntegration } from '~~/shared/schemas/form';
+import { createFormIntegrationConfigSchema, FormIntegrationConfig } from '~~/shared/schemas/form';
 
 export default defineEventHandler(async (event) => {
   const { formId } = getRouterParams(event);
   const { user } = await authenticateRequest(event);
   const db = await useDatabase();
-  const body = await readValidatedBody(event, createFormIntegrationSchema.parse);
+  const body = await readValidatedBody(event, createFormIntegrationConfigSchema.parse);
 
   const formResponse = await db
     .select()
@@ -24,11 +24,9 @@ export default defineEventHandler(async (event) => {
   const form = formResponse[0];
 
   const integration = await db
-    .insert(formIntegrationsTable)
+    .insert(formIntegrationConfigsTable)
     .values({ ...body, formId: form.id })
     .returning();
 
-  console.log(integration);
-
-  return integration[0]! as unknown as FormIntegration;
+  return integration[0]! as unknown as FormIntegrationConfig;
 });

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const IntegrationTypeEnum = {
+export const IntegrationApps = {
   Webhook: 0,
   Email: 1,
   Telegram: 2,
@@ -8,16 +8,18 @@ export const IntegrationTypeEnum = {
   GoogleSheets: 4,
   Discord: 5,
 } as const;
+export type IntegrationApp = keyof typeof IntegrationApps;
+export type IntegrationAppId = (typeof IntegrationApps)[IntegrationApp];
 
 // List of integrations that are implemented.
-const WhitelistedIntegrations = [
-  IntegrationTypeEnum.Webhook,
-  IntegrationTypeEnum.Email,
-  IntegrationTypeEnum.Telegram,
-  IntegrationTypeEnum.Discord,
+const WhitelistedIntegrationApps = [
+  IntegrationApps.Webhook,
+  IntegrationApps.Email,
+  IntegrationApps.Telegram,
+  IntegrationApps.Discord,
 ];
 
-const IntegrationIcons: Record<keyof typeof IntegrationTypeEnum, string> = {
+const IntegrationAppIcons: Record<IntegrationApp, string> = {
   Webhook: 'material-symbols:webhook',
   Email: 'ic:outline-email',
   Telegram: 'logos:telegram',
@@ -26,7 +28,7 @@ const IntegrationIcons: Record<keyof typeof IntegrationTypeEnum, string> = {
   Discord: 'logos:discord-icon',
 } as const;
 
-const IntegrationDescriptions: Record<keyof typeof IntegrationTypeEnum, string> = {
+const IntegrationAppDescriptions: Record<IntegrationApp, string> = {
   Webhook: 'Sends form submissions to a webhook',
   Email: 'Sends form submissions to an email',
   Telegram: 'Sends form submissions to a Telegram channel',
@@ -35,7 +37,7 @@ const IntegrationDescriptions: Record<keyof typeof IntegrationTypeEnum, string> 
   Discord: 'Sends form submissions to a Discord channel',
 } as const;
 
-const IntegrationNames: Record<keyof typeof IntegrationTypeEnum, string> = {
+const IntegrationAppNames: Record<IntegrationApp, string> = {
   Webhook: 'Webhook',
   Email: 'Email',
   Telegram: 'Telegram',
@@ -55,7 +57,7 @@ export const EmailProviderTypes = {
   Resend: 7,
 } as const;
 
-export const FormValidationSchemas: Record<keyof typeof IntegrationTypeEnum, Zod.ZodSchema> = {
+export const FormValidationSchemas: Record<IntegrationApp, Zod.ZodSchema> = {
   Webhook: z.object({
     url: z.string().url(),
     headers: z.record(z.string(), z.string()).optional(),
@@ -90,22 +92,26 @@ export const FormValidationSchemas: Record<keyof typeof IntegrationTypeEnum, Zod
   }),
 } as const;
 
-export const IntegrationTypes = Object.keys(IntegrationTypeEnum)
+export const Integrations = Object.keys(IntegrationApps)
   // @ts-expect-error TODO: Fix this
-  .filter((key) => WhitelistedIntegrations.includes(IntegrationTypeEnum[key]))
+  .filter((key) => WhitelistedIntegrationApps.includes(IntegrationApps[key]))
   .map((key) => {
-    const id = key as keyof typeof IntegrationTypeEnum;
+    const id = key as IntegrationApp;
     return {
       id,
-      name: IntegrationNames[id],
-      type: IntegrationTypeEnum[id],
-      icon: IntegrationIcons[id],
-      description: IntegrationDescriptions[id],
+      name: IntegrationAppNames[id],
+      type: IntegrationApps[id],
+      icon: IntegrationAppIcons[id],
+      description: IntegrationAppDescriptions[id],
       formValidationSchema: FormValidationSchemas[id],
     };
   });
-export type IntegrationType = (typeof IntegrationTypes)[number];
+export type Integration = (typeof Integrations)[number];
 
-export const getIntegrationType = (type: number) => {
-  return IntegrationTypes.find((integration) => integration.type === type);
+export const getIntegration = (type: number) => {
+  const integration = Integrations.find((integration) => integration.type === type);
+  if (!integration) {
+    throw new Error(`Integration with type ${type} not found`);
+  }
+  return integration;
 };

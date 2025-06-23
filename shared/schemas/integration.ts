@@ -1,13 +1,18 @@
 import { z } from 'zod';
 
-export const integrationSchema = z.object({
+export const integrationConfigSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255),
   type: z.number().int().min(0).max(255),
   data: z.record(z.any()),
-  createdAt: z.date(),
+  createdAt: z.string().datetime(),
 });
 
-export type Integration = z.infer<typeof integrationSchema>;
-export const createIntegrationSchema = integrationSchema.omit({ id: true, createdAt: true });
-export const updateIntegrationSchema = integrationSchema.omit({ id: true, createdAt: true }).partial();
+export type IntegrationConfig<T extends Record<string, any> = Record<string, any>> = z.infer<
+  typeof integrationConfigSchema
+> & {
+  data: T;
+};
+
+export const createIntegrationConfigSchema = integrationConfigSchema.omit({ id: true, createdAt: true });
+export const updateIntegrationConfigSchema = integrationConfigSchema.omit({ id: true, createdAt: true }).partial();

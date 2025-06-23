@@ -1,15 +1,18 @@
 import { eq } from 'drizzle-orm';
-import { integrationsTable } from '~~/server/db/schema';
+import { integrationConfigsTable } from '~~/server/db/schema';
 import authenticateRequest from '~~/server/utils/auth';
-import { Integration } from '~~/shared/schemas/integration';
+import { IntegrationConfig } from '~~/shared/schemas/integration';
 
 export default defineEventHandler(async (event) => {
   const { user } = await authenticateRequest(event);
 
   const db = await useDatabase();
-  const integrations = await db.select().from(integrationsTable).where(eq(integrationsTable.adminId, user.id));
-  return integrations.map((integration) => {
-    const { adminId, ...rest } = integration;
-    return rest as unknown as Integration;
+  const integrationConfigs = await db
+    .select()
+    .from(integrationConfigsTable)
+    .where(eq(integrationConfigsTable.adminId, user.id));
+  return integrationConfigs.map((integrationConfig) => {
+    const { adminId, ...rest } = integrationConfig;
+    return rest as unknown as IntegrationConfig;
   });
 });

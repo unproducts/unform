@@ -1,5 +1,5 @@
 {
-  "id": "2210c542-20c2-4259-a1c1-f7a1f55065cc",
+  "id": "612f57c3-ea2d-48a1-bd00-d52f3a78f050",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -80,12 +80,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "admin_id": {
-          "name": "admin_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
         "form_id": {
           "name": "form_id",
           "type": "uuid",
@@ -108,19 +102,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "form_domains_admin_id_admins_id_fk": {
-          "name": "form_domains_admin_id_admins_id_fk",
-          "tableFrom": "form_domains",
-          "tableTo": "admins",
-          "columnsFrom": [
-            "admin_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "form_domains_form_id_forms_id_fk": {
           "name": "form_domains_form_id_forms_id_fk",
           "tableFrom": "form_domains",
@@ -141,8 +122,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.form_responses": {
-      "name": "form_responses",
+    "public.form_integration_configs": {
+      "name": "form_integration_configs",
       "schema": "",
       "columns": {
         "id": {
@@ -151,10 +132,78 @@
           "primaryKey": true,
           "notNull": true
         },
-        "admin_id": {
-          "name": "admin_id",
+        "form_id": {
+          "name": "form_id",
           "type": "uuid",
           "primaryKey": false,
+          "notNull": true
+        },
+        "integration_config_id": {
+          "name": "integration_config_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "form_integration_configs_form_id_forms_id_fk": {
+          "name": "form_integration_configs_form_id_forms_id_fk",
+          "tableFrom": "form_integration_configs",
+          "tableTo": "forms",
+          "columnsFrom": [
+            "form_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "form_integration_configs_integration_config_id_integration_configs_id_fk": {
+          "name": "form_integration_configs_integration_config_id_integration_configs_id_fk",
+          "tableFrom": "form_integration_configs",
+          "tableTo": "integration_configs",
+          "columnsFrom": [
+            "integration_config_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "form_integration_configs_form_id_integration_config_id_unique": {
+          "name": "form_integration_configs_form_id_integration_config_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "form_id",
+            "integration_config_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.form_responses": {
+      "name": "form_responses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
           "notNull": true
         },
         "form_id": {
@@ -185,19 +234,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "form_responses_admin_id_admins_id_fk": {
-          "name": "form_responses_admin_id_admins_id_fk",
-          "tableFrom": "form_responses",
-          "tableTo": "admins",
-          "columnsFrom": [
-            "admin_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "form_responses_form_id_forms_id_fk": {
           "name": "form_responses_form_id_forms_id_fk",
           "tableFrom": "form_responses",
@@ -260,6 +296,70 @@
         "forms_admin_id_admins_id_fk": {
           "name": "forms_admin_id_admins_id_fk",
           "tableFrom": "forms",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.integration_configs": {
+      "name": "integration_configs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "integration_configs_admin_id_admins_id_fk": {
+          "name": "integration_configs_admin_id_admins_id_fk",
+          "tableFrom": "integration_configs",
           "tableTo": "admins",
           "columnsFrom": [
             "admin_id"

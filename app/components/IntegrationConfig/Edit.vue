@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Integration } from '~~/shared/schemas/integration';
+import type { IntegrationConfig } from '~~/shared/schemas/integration';
 
 defineProps<{
-  integration: Integration;
+  integrationConfig: IntegrationConfig;
 }>();
 
 const emit = defineEmits<{
@@ -12,8 +12,8 @@ const emit = defineEmits<{
 
 <template>
   <Card title="Edit Integration">
-    <IntegrationForm
-      :integration="integration"
+    <IntegrationConfigForm
+      :integrationConfig="integrationConfig"
       @cancel="emit('cancel')"
       :show-config-form="true"
       :show-delete-button="true"

@@ -1,20 +1,20 @@
 import { ref } from 'vue';
-import type { FormIntegration } from '~~/shared/schemas/form';
-import { createFormIntegrationSchema } from '~~/shared/schemas/form';
+import type { FormIntegrationConfig } from '~~/shared/schemas/form';
+import { createFormIntegrationConfigSchema } from '~~/shared/schemas/form';
 
 export const useFormIntegrations = (formId: string) => {
-  const integrations = ref<FormIntegration[]>([]);
+  const formIntegrationConfigs = ref<FormIntegrationConfig[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
   // Fetch all integrations for a form
-  const fetchIntegrations = async () => {
+  const fetchFormIntegrations = async () => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      const response = await $fetch<FormIntegration[]>(`/api/forms/${formId}/integrations`);
-      integrations.value = response;
+      const response = await $fetch<FormIntegrationConfig[]>(`/api/forms/${formId}/integrations`);
+      formIntegrationConfigs.value = response;
     } catch (err) {
       console.error('Failed to fetch form integrations:', err);
       error.value = 'Failed to fetch form integrations';
@@ -25,24 +25,24 @@ export const useFormIntegrations = (formId: string) => {
   };
 
   // Add an integration to a form
-  const addIntegration = async (integrationId: string) => {
+  const addFormIntegration = async (integrationConfigId: string) => {
     isLoading.value = true;
     error.value = null;
 
     try {
       // Validate the integration data
-      createFormIntegrationSchema.parse({ integrationId });
+      createFormIntegrationConfigSchema.parse({ integrationConfigId });
 
       // Submit to API
-      const createdIntegration = await $fetch<FormIntegration>(`/api/forms/${formId}/integrations`, {
+      const createFormIntegrationConfig = await $fetch<FormIntegrationConfig>(`/api/forms/${formId}/integrations`, {
         method: 'POST',
-        body: { integrationId },
+        body: { integrationConfigId },
       });
 
       // Add to local list
-      integrations.value.push(createdIntegration);
+      formIntegrationConfigs.value.push(createFormIntegrationConfig);
 
-      return createdIntegration;
+      return createFormIntegrationConfig;
     } catch (err) {
       console.error('Failed to add integration:', err);
       error.value = 'Failed to add integration';
@@ -53,17 +53,17 @@ export const useFormIntegrations = (formId: string) => {
   };
 
   // Remove an integration from a form
-  const removeIntegration = async (formIntegration: FormIntegration) => {
+  const removeFormIntegration = async (formIntegrationConfig: FormIntegrationConfig) => {
     isLoading.value = true;
     error.value = null;
 
     try {
-      await $fetch(`/api/forms/${formId}/integrations/${formIntegration.id}`, {
+      await $fetch(`/api/forms/${formId}/integrations/${formIntegrationConfig.id}`, {
         method: 'DELETE',
       });
 
       // Remove from local list
-      integrations.value = integrations.value.filter((i) => i.id !== formIntegration.id);
+      formIntegrationConfigs.value = formIntegrationConfigs.value.filter((i) => i.id !== formIntegrationConfig.id);
     } catch (err) {
       console.error('Failed to remove integration:', err);
       error.value = 'Failed to remove integration';
@@ -74,11 +74,11 @@ export const useFormIntegrations = (formId: string) => {
   };
 
   return {
-    integrations,
+    formIntegrationConfigs,
     isLoading,
     error,
-    fetchIntegrations,
-    addIntegration,
-    removeIntegration,
+    fetchFormIntegrations,
+    addFormIntegration,
+    removeFormIntegration,
   };
 };

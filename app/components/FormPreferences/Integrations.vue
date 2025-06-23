@@ -4,10 +4,10 @@
       <div v-if="error" class="bg-red-50 p-3 rounded text-red-600 text-sm">
         {{ error }}
       </div>
-      <div class="flex items-center space-x-2" v-for="integration in formIntegrations" :key="integration.id">
+      <div class="flex items-center space-x-2" v-for="integration in formIntegrationConfigs" :key="integration.id">
         <div class="flex-grow flex items-center space-x-2">
-          <Icon :name="getIntegrationIcon(integration.integrationId)" class="w-5 h-5 text-gray-500" />
-          <span class="text-gray-700">{{ getIntegrationName(integration.integrationId) }}</span>
+          <Icon :name="getIntegrationIcon(integration.integrationConfigId)" class="w-5 h-5 text-gray-500" />
+          <span class="text-gray-700">{{ getIntegrationName(integration.integrationConfigId) }}</span>
         </div>
         <button
           @click="showDeleteConfirm(integration)"
@@ -54,61 +54,56 @@
 
 <script setup lang="ts">
 import type { Form } from '~~/shared/schemas/form';
-import type { FormIntegration } from '~~/shared/schemas/form';
-import { getIntegrationType } from '~~/shared/consts/integrations';
+import type { FormIntegrationConfig } from '~~/shared/schemas/form';
+import { getIntegration } from '~~/shared/consts/integrations';
 
 const props = defineProps<{
   form: Form;
 }>();
 
-const {
-  integrations: formIntegrations,
-  isLoading,
-  error,
-  addIntegration,
-  removeIntegration,
-  fetchIntegrations,
-} = useFormIntegrations(props.form.id);
-const { integrations: availableIntegrationsList, fetchIntegrations: fetchAvailableIntegrations } = useIntegrations();
+const { formIntegrationConfigs, isLoading, error, addFormIntegration, removeFormIntegration, fetchFormIntegrations } =
+  useFormIntegrations(props.form.id);
+const { integrationConfigs: availableIntegrationConfigs, fetchIntegrationConfigs: fetchAvailableIntegrationConfigs } =
+  useIntegrationConfigs();
 
 // Fetch both form integrations and available integrations
-fetchIntegrations();
-fetchAvailableIntegrations();
+fetchFormIntegrations();
+fetchAvailableIntegrationConfigs();
 
 const selectedIntegrationId = ref('');
 const showDeleteModal = ref(false);
-const integrationToDelete = ref<FormIntegration | null>(null);
+const integrationToDelete = ref<FormIntegrationConfig | null>(null);
 
 // Helper functions
 const getIntegrationIcon = (integrationId: string) => {
-  const integration = availableIntegrationsList.value.find((i) => i.id === integrationId);
+  const integration = availableIntegrationConfigs.value.find((i) => i.id === integrationId);
   if (!integration) return 'material-symbols:integration-instructions';
-  const type = getIntegrationType(integration.type);
+  const type = getIntegration(integration.type);
   return type?.icon || 'material-symbols:integration-instructions';
 };
 
 const getIntegrationName = (integrationId: string) => {
-  const integration = availableIntegrationsList.value.find((i) => i.id === integrationId);
+  const integration = availableIntegrationConfigs.value.find((i) => i.id === integrationId);
   if (!integration) return 'Unknown Integration';
-  const type = getIntegrationType(integration.type);
+  const type = getIntegration(integration.type);
   return integration.name || type?.name || 'Unknown Integration';
 };
 
 // Compute available integrations (those not already added to the form)
 const availableIntegrations = computed(() => {
-  const addedIntegrationIds = new Set(formIntegrations.value.map((i) => i.integrationId));
-  return availableIntegrationsList.value.filter((i) => !addedIntegrationIds.has(i.id));
+  const addedIntegrationIds = new Set(formIntegrationConfigs.value.map((i) => i.integrationConfigId));
+  return availableIntegrationConfigs.value.filter((i) => !addedIntegrationIds.has(i.id));
 });
 
 const disabled = computed(() => isLoading.value || !!error.value);
 
 const deleteConfirmMessage = computed(() => {
   if (!integrationToDelete.value) return '';
-  const name = getIntegrationName(integrationToDelete.value.integrationId);
+  const name = getIntegrationName(integrationToDelete.value.integrationConfigId);
   return `Are you sure you want to remove the "${name}" integration? This will stop sending form submissions to this integration.`;
 });
 
-const showDeleteConfirm = (integration: FormIntegration) => {
+const showDeleteConfirm = (integration: FormIntegrationConfig) => {
   if (disabled.value) return;
   integrationToDelete.value = integration;
   showDeleteModal.value = true;
@@ -116,14 +111,14 @@ const showDeleteConfirm = (integration: FormIntegration) => {
 
 const confirmDelete = async () => {
   if (!integrationToDelete.value) return;
-  await removeIntegration(integrationToDelete.value);
+  await removeFormIntegration(integrationToDelete.value);
   showDeleteModal.value = false;
   integrationToDelete.value = null;
 };
 
 const handleAddIntegration = async () => {
   if (disabled.value || !selectedIntegrationId.value) return;
-  await addIntegration(selectedIntegrationId.value);
+  await addFormIntegration(selectedIntegrationId.value);
   selectedIntegrationId.value = '';
 };
 </script>
