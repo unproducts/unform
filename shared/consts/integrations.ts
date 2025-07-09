@@ -47,28 +47,32 @@ const IntegrationAppNames: Record<IntegrationApp, string> = {
 } as const;
 
 export const EmailProviderTypes = {
-  ListMonk: 0,
-  Mailgun: 1,
-  SendGrid: 2,
-  Postmark: 3,
-  Mailjet: 4,
-  Sendinblue: 5,
-  Mailchimp: 6,
-  Resend: 7,
+  SendGrid: 1,
+  Postmark: 2,
+  Mailjet: 3,
+  Mailchimp: 4,
+  Resend: 5,
+  MailerSend: 6,
 } as const;
 
-export const FormValidationSchemas: Record<IntegrationApp, Zod.ZodSchema> = {
+export const FormValidationSchemas = {
   Webhook: z.object({
     url: z.string().url(),
     headers: z.record(z.string(), z.string()).optional(),
   }),
   Email: z.object({
-    provider: z.number().int().min(0).max(7),
-    email: z.string().email(),
-    emailSubject: z.string().optional(),
-    replyTo: z.string().email().optional(),
-    providerKey: z.string(),
-    includeFormData: z.boolean().optional(),
+    provider: z.nativeEnum(EmailProviderTypes),
+    providerKey: z.string().min(1, 'Provider API key is required'),
+    senderEmail: z.string().email('Please enter a valid sender email'),
+    senderName: z.string().min(1, 'Sender name is required'),
+    recipients: z
+      .array(z.string().email('Please enter valid recipient email(s)'))
+      .min(1, 'At least one recipient is required'),
+    cc: z.array(z.string().email('Please enter valid CC email(s)')).optional(),
+    bcc: z.array(z.string().email('Please enter valid BCC email(s)')).optional(),
+    emailSubject: z.string().min(1, 'Email subject is required'),
+    replyTo: z.string().email('Please enter a valid reply-to email').optional(),
+    includeFormData: z.boolean().default(true),
   }),
   Telegram: z.object({
     botToken: z.string(),

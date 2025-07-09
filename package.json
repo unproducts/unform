@@ -16,6 +16,7 @@
     "@nuxt/fonts": "0.11.2",
     "@nuxt/icon": "1.12.0",
     "@nuxtjs/tailwindcss": "6.13.2",
+    "@unproducts/unmail": "^0.1.0",
     "drizzle-kit": "^0.31.0",
     "drizzle-orm": "^0.43.1",
     "nuxt": "^3.16.2",

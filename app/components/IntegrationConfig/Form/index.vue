@@ -41,7 +41,6 @@ watch(
       configPending.value = false;
     } else {
       const integrationType = getIntegration(value.type)!;
-      console.log(integrationType, value);
       configPending.value = !integrationType.formValidationSchema.safeParse(value.data).success;
     }
   },

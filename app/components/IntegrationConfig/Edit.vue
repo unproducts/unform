@@ -12,11 +12,6 @@ const emit = defineEmits<{
 
 <template>
   <Card title="Edit Integration">
-    <IntegrationConfigForm
-      :integrationConfig="integrationConfig"
-      @cancel="emit('cancel')"
-      :show-config-form="true"
-      :show-delete-button="true"
-    />
+    <IntegrationConfigForm :integrationConfig="integrationConfig" @cancel="emit('cancel')" :show-config-form="true" />
   </Card>
 </template>
