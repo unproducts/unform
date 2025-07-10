@@ -50,9 +50,52 @@ export function useFormResponses(formId: string) {
 
   // Export responses as CSV
   const exportResponsesAsCSV = () => {
-    // This function could be implemented to generate a CSV from the responses
-    // For now, we'll just return the JSON data
-    return responses.value;
+    if (!responses.value.length) {
+      return '';
+    }
+
+    // Get all unique fields from all responses
+    const fields = new Set<string>();
+    fields.add('ID');
+    fields.add('Date');
+
+    responses.value.forEach((response) => {
+      if (response.data && typeof response.data === 'object') {
+        Object.keys(response.data).forEach((key) => fields.add(key));
+      }
+    });
+
+    // Convert fields to array
+    const headers = Array.from(fields);
+
+    // Create CSV content
+    const csvContent = [
+      // Headers row
+      headers.join(','),
+      // Data rows
+      ...responses.value.map((response) => {
+        return headers
+          .map((header) => {
+            let value = '';
+            if (header === 'ID') {
+              value = response.id;
+            } else if (header === 'Date') {
+              value = new Date(response.createdAt).toLocaleString();
+            } else if (response.data && typeof response.data === 'object') {
+              value = response.data[header] || '';
+            }
+            // Escape quotes and wrap in quotes if contains comma or newline
+            value = String(value).replace(/"/g, '""');
+            if (value.includes(',') || value.includes('\n') || value.includes('"')) {
+              value = `"${value}"`;
+            }
+            return value;
+          })
+          .join(',');
+      }),
+    ].join('\n');
+
+    return csvContent;
   };
 
   return {

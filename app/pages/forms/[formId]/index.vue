@@ -202,9 +202,19 @@ async function deleteResponse(id: string): Promise<void> {
 }
 
 function exportResponses(): void {
-  const data = exportResponsesAsCSV();
-  // In a real implementation, this would generate and download a CSV file
-  alert(`Exporting ${data.length} responses as CSV...`);
+  const csvContent = exportResponsesAsCSV();
+  if (!csvContent) {
+    return;
+  }
+
+  // Create blob and download link
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', `${form.value.name}-responses-${new Date().toISOString().split('T')[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 function copyEndpoint(): void {
