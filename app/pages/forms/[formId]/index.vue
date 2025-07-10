@@ -152,7 +152,7 @@ const deleteResponseLoading = ref<boolean>(false);
 const selectedResponse = ref<FormResponse | null>(null);
 
 const formEndpoint = computed<string>(() => {
-  return `${host}/forms/${formId}`;
+  return `${host}/collect/${formId}`;
 });
 
 // Load data on mount

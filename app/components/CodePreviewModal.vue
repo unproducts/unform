@@ -47,5 +47,5 @@ const props = defineProps<{
 const showModal = defineModel<boolean>('modelValue', { required: true });
 
 const publicRuntimeConfig = useRuntimeConfig().public;
-const formEndpoint = computed(() => `${publicRuntimeConfig.host}/forms/${props.form.id}`);
+const formEndpoint = computed(() => `${publicRuntimeConfig.host}/collect/${props.form.id}`);
 </script>
