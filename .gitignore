@@ -22,3 +22,7 @@ logs
 .env
 .env.*
 !.env.example
+
+# used to build locally and deploy to remote server
+# when server doesn't have enough resources to build
+remote-deploy.sh
