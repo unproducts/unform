@@ -8,6 +8,7 @@ import ResendDriver from '@unproducts/unmail/drivers/resend';
 import SendgridDriver from '@unproducts/unmail/drivers/sendgrid';
 import MailjetDriver from '@unproducts/unmail/drivers/mailjet';
 import PostmarkDriver from '@unproducts/unmail/drivers/postmark';
+import { makeDefaultMessage, makeDefaultMessageWithFormData } from './_utils';
 
 export default defineIntegration(IntegrationApps.Email, async (options) => {
   const data = options.integrationConfig.data as Zod.infer<typeof FormValidationSchemas.Email>;
@@ -63,6 +64,11 @@ export default defineIntegration(IntegrationApps.Email, async (options) => {
   const cc = data.cc?.map((cc) => ({ email: cc })) || [];
   const bcc = data.bcc?.map((bcc) => ({ email: bcc })) || [];
 
+  let text = makeDefaultMessage(options.form);
+  if (options.integrationConfig.includeFormData) {
+    text = makeDefaultMessageWithFormData(options.form, options.formResponse);
+  }
+
   const sendMailResponse = await unmail.sendMail({
     from: {
       email: data.senderEmail,
@@ -73,7 +79,7 @@ export default defineIntegration(IntegrationApps.Email, async (options) => {
     bcc,
     subject: data.emailSubject,
     replyTo: data.replyTo ? { email: data.replyTo } : undefined,
-    text: 'Submission Received',
+    text,
   });
 
   if (!sendMailResponse.success) {

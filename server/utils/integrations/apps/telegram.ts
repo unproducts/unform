@@ -1,5 +1,6 @@
 import { FormValidationSchemas, IntegrationApps } from '~~/shared/consts/integrations';
 import { defineIntegration } from '../base';
+import { makeDefaultMessage, makeDefaultMessageWithFormData } from './_utils';
 
 export default defineIntegration(IntegrationApps.Telegram, async (options) => {
   const data = options.integrationConfig.data as Zod.infer<typeof FormValidationSchemas.Telegram>;
@@ -7,12 +8,17 @@ export default defineIntegration(IntegrationApps.Telegram, async (options) => {
 
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
+  let text = makeDefaultMessage(options.form);
+  if (options.integrationConfig.includeFormData) {
+    text = makeDefaultMessageWithFormData(options.form, options.formResponse);
+  }
+
   try {
     await $fetch(url, {
       method: 'POST',
       body: {
         chat_id: chatId,
-        text: 'message',
+        text,
       },
     });
   } catch (error: any) {
