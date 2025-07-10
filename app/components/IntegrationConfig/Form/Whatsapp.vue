@@ -13,7 +13,6 @@ if (!data.value?.apiKey) {
     phoneNumberId: '',
     recipientNumber: '',
     messageTemplate: 'New form submission received from {formName}',
-    includeFormData: true,
   };
 }
 </script>
@@ -70,17 +69,6 @@ if (!data.value?.apiKey) {
         placeholder="New form submission received from {formName}"
       ></textarea>
       <p class="mt-1 text-xs text-gray-500">Template for notification messages. Use {formName} as a placeholder.</p>
-    </div>
-
-    <!-- Include form data option -->
-    <div class="flex items-center space-x-2">
-      <input
-        id="include-form-data"
-        v-model="data.includeFormData"
-        type="checkbox"
-        class="rounded border-gray-300 text-blue-600"
-      />
-      <label for="include-form-data" class="text-sm font-medium text-gray-700"> Include form data in message </label>
     </div>
 
     <!-- Note about WhatsApp API -->

@@ -15,7 +15,6 @@ const data = defineModel<z.infer<typeof FormValidationSchemas.Email>>('data', {
     bcc: [],
     emailSubject: '',
     replyTo: '',
-    includeFormData: true,
   }),
 });
 
@@ -304,17 +303,6 @@ const providerOptions = Object.entries(EmailProviderTypes)
         @blur="validateField('replyTo')"
       />
       <p v-if="errors.replyTo" class="mt-1 text-xs text-red-600">{{ errors.replyTo }}</p>
-    </div>
-
-    <!-- Include form data -->
-    <div class="flex items-center space-x-2">
-      <input
-        id="include-form-data"
-        v-model="data.includeFormData"
-        type="checkbox"
-        class="rounded border-gray-300 text-bermuda-600 focus:ring-bermuda-500"
-      />
-      <label for="include-form-data" class="text-sm font-medium text-bermuda-700">Include form data in email</label>
     </div>
   </div>
 </template>

@@ -1,0 +1,1 @@
+ALTER TABLE "integration_configs" ADD COLUMN "include_form_data" boolean DEFAULT false NOT NULL;

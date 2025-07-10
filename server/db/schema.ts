@@ -68,5 +68,6 @@ export const integrationConfigsTable = pgTable('integration_configs', {
   type: smallint('type').notNull(),
   name: varchar('name', { length: 255 }).notNull(),
   data: json('data').$type<Record<string, any>>().notNull(),
+  includeFormData: boolean('include_form_data').default(false).notNull(),
   createdAt: timestamp('created_at').$type<string>().defaultNow().notNull(),
 });

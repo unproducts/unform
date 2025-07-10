@@ -72,7 +72,6 @@ export const FormValidationSchemas = {
     bcc: z.array(z.string().email('Please enter valid BCC email(s)')).optional(),
     emailSubject: z.string().min(1, 'Email subject is required'),
     replyTo: z.string().email('Please enter a valid reply-to email').optional(),
-    includeFormData: z.boolean().default(true),
   }),
   Telegram: z.object({
     botToken: z.string(),

@@ -5,6 +5,7 @@ export const integrationConfigSchema = z.object({
   name: z.string().min(1).max(255),
   type: z.number().int().min(0).max(255),
   data: z.record(z.any()),
+  includeFormData: z.boolean().default(false),
   createdAt: z.string().datetime(),
 });
 

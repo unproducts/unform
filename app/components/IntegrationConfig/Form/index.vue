@@ -31,6 +31,7 @@ const integrationFormRef = ref<Zod.infer<typeof createIntegrationConfigSchema>>(
     name: '',
     type: 0,
     data: {},
+    includeFormData: false,
   }
 );
 
@@ -55,6 +56,7 @@ watch(
         name: '',
         type: 0,
         data: {},
+        includeFormData: false,
       };
     } else {
       integrationFormRef.value = value;
@@ -122,6 +124,20 @@ const integrationFormComponent = computed(() => {
           {{ integration.name }}
         </option>
       </select>
+    </div>
+
+    <div class="mt-4">
+      <label class="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          v-model="integrationFormRef.includeFormData"
+          class="form-checkbox h-4 w-4 text-bermuda-600 rounded border-gray-300"
+        />
+        <span class="text-sm text-gray-700">Include form data in notifications</span>
+      </label>
+      <p class="mt-1 text-xs text-gray-500">
+        When enabled, the complete form submission data will be included in notifications
+      </p>
     </div>
 
     <div v-if="showConfigForm">
