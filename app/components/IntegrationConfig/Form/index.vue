@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getIntegration, IntegrationApps, Integrations } from '~~/shared/consts/integrations';
+import { getIntegration, IntegrationApps, WhitelistedIntegrations } from '~~/shared/consts/integrations';
 import type { createIntegrationConfigSchema, IntegrationConfig } from '~~/shared/schemas/integration';
 
 import Webhook from './Webhook.vue';
@@ -29,7 +29,7 @@ const isUpdating = computed(() => !!props.integrationConfig);
 const integrationFormRef = ref<Zod.infer<typeof createIntegrationConfigSchema>>(
   props.integrationConfig || {
     name: '',
-    type: 0,
+    type: 1,
     data: {},
     includeFormData: false,
   }
@@ -120,7 +120,7 @@ const integrationFormComponent = computed(() => {
         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
       >
         <option disabled :value="null">Select an integration type</option>
-        <option v-for="integration in Integrations" :key="integration.type" :value="integration.type">
+        <option v-for="integration in WhitelistedIntegrations" :key="integration.type" :value="integration.type">
           {{ integration.name }}
         </option>
       </select>

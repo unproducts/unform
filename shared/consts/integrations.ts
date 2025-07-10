@@ -12,12 +12,7 @@ export type IntegrationApp = keyof typeof IntegrationApps;
 export type IntegrationAppId = (typeof IntegrationApps)[IntegrationApp];
 
 // List of integrations that are implemented.
-const WhitelistedIntegrationApps = [
-  IntegrationApps.Webhook,
-  IntegrationApps.Email,
-  IntegrationApps.Telegram,
-  IntegrationApps.Discord,
-];
+const WhitelistedIntegrationApps = [IntegrationApps.Email, IntegrationApps.Telegram];
 
 const IntegrationAppIcons: Record<IntegrationApp, string> = {
   Webhook: 'material-symbols:webhook',
@@ -95,20 +90,21 @@ export const FormValidationSchemas = {
   }),
 } as const;
 
-export const Integrations = Object.keys(IntegrationApps)
-  // @ts-expect-error TODO: Fix this
-  .filter((key) => WhitelistedIntegrationApps.includes(IntegrationApps[key]))
-  .map((key) => {
-    const id = key as IntegrationApp;
-    return {
-      id,
-      name: IntegrationAppNames[id],
-      type: IntegrationApps[id],
-      icon: IntegrationAppIcons[id],
-      description: IntegrationAppDescriptions[id],
-      formValidationSchema: FormValidationSchemas[id],
-    };
-  });
+export const Integrations = Object.keys(IntegrationApps).map((key) => {
+  const id = key as IntegrationApp;
+  return {
+    id,
+    name: IntegrationAppNames[id],
+    type: IntegrationApps[id],
+    icon: IntegrationAppIcons[id],
+    description: IntegrationAppDescriptions[id],
+    formValidationSchema: FormValidationSchemas[id],
+  };
+});
+export const WhitelistedIntegrations = Integrations.filter((integration) => {
+  // @ts-expect-error
+  return WhitelistedIntegrationApps.includes(integration.type);
+});
 export type Integration = (typeof Integrations)[number];
 
 export const getIntegration = (type: number) => {
