@@ -8,6 +8,7 @@ const sendFormResponseRedirect = (event: H3Event, returnURL: string, success: bo
   const returnURLObject = new URL(returnURL);
   returnURLObject.searchParams.set('success', success.toString());
   if (errorCode) {
+    console.error(new Error(`returnURL ${returnURL}, errorCode ${errorCode}`));
     returnURLObject.searchParams.set('error', errorCode);
   }
   return sendRedirect(event, returnURLObject.toString());
@@ -111,6 +112,7 @@ export default defineEventHandler(async (event) => {
       const originUrl = new URL(origin!);
       originDomain = originUrl.hostname;
     } catch (e) {
+      console.error("[line]-144",e);
       return sendFormResponseRedirect(event, returnURL!, false, errorCodes.invalidOrigin);
     }
 
