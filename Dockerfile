@@ -1,7 +1,8 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY . .
-RUN npm i -g yarn
+RUN corepack enable
+RUN corepack prepare yarn@stable --activate
 RUN yarn
 RUN yarn build
 
