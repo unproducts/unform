@@ -2,7 +2,10 @@ import 'dotenv/config';
 import type { Config } from 'drizzle-kit';
 
 const isRunningLocally = () =>
-  process.env.NUXT_DB_HOST?.includes('localhost') || process.env.NUXT_DB_HOST?.includes('127.0.0.1');
+  process.env.NUXT_DB_HOST?.includes('localhost') ||
+  process.env.NUXT_DB_HOST?.includes('127.0.0.1') ||
+  process.env.NUXT_DB_IS_RUNNING_LOCALLY === 'true' ||
+  process.env.NUXT_DB_IS_RUNNING_LOCALLY === '1';
 
 export default {
   schema: './server/db/schema.ts',

@@ -6,7 +6,10 @@ let client: pg.Client | null;
 let drizzleInstance: NodePgDatabase;
 
 const isRunningLocally = () =>
-  process.env.NUXT_DB_HOST?.includes('localhost') || process.env.NUXT_DB_HOST?.includes('127.0.0.1');
+  process.env.NUXT_DB_HOST?.includes('localhost') ||
+  process.env.NUXT_DB_HOST?.includes('127.0.0.1') ||
+  process.env.NUXT_DB_IS_RUNNING_LOCALLY === 'true' ||
+  process.env.NUXT_DB_IS_RUNNING_LOCALLY === '1';
 
 export async function useDatabase() {
   try {
