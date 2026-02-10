@@ -78,7 +78,7 @@
 }
 
 .table td {
-  @apply px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500;
+  @apply px-3 py-2 md:px-6 md:py-4 text-sm text-gray-500;
 }
 
 /* Mobile-friendly spacing */

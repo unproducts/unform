@@ -72,22 +72,27 @@
             <table class="table">
               <thead class="bg-bermuda-50">
                 <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">Date</th>
-                  <th v-for="field in formFields" :key="field" scope="col">
+                  <th scope="col" class="max-w-32">ID</th>
+                  <th scope="col" class="max-w-32">Date</th>
+                  <th v-for="field in formFields" :key="field" scope="col" class="max-w-xs">
                     {{ field }}
                   </th>
-                  <th scope="col" class="text-right">Actions</th>
+                  <th scope="col" class="text-right max-w-32">Actions</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-for="response in responses" :key="response.id">
-                  <td>{{ response.id }}</td>
-                  <td>{{ formatTime(response.createdAt) }}</td>
-                  <td v-for="field in formFields" :key="field">
-                    {{ (response.data && response.data[field]) || '-' }}
+                  <td class="truncate max-w-32" :title="response.id">{{ response.id }}</td>
+                  <td class="truncate max-w-32" :title="formatTime(response.createdAt)">{{ formatTime(response.createdAt) }}</td>
+                  <td
+                    v-for="field in formFields"
+                    :key="field"
+                    class="truncate max-w-xs"
+                    :title="getFieldValue(response, field)"
+                  >
+                    {{ getFieldValue(response, field) }}
                   </td>
-                  <td class="text-right">
+                  <td class="text-right max-w-32">
                     <div class="flex justify-end space-x-2">
                       <button @click="viewResponseDetails(response)" class="text-bermuda-600 hover:text-bermuda-800">
                         View
@@ -223,5 +228,16 @@ function copyEndpoint(): void {
 
 function formatTime(dateString: string): string {
   return new Date(dateString).toLocaleTimeString();
+}
+
+function getFieldValue(response: FormResponse, field: string): string {
+  const value = response.data && response.data[field];
+  if (value === null || value === undefined) {
+    return '-';
+  }
+  if (typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+  return String(value);
 }
 </script>
